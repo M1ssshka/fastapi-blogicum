@@ -60,7 +60,7 @@ def update_post(post_id: int, post: PostUpdateSchema) -> dict:
     response['location'] = post.location
     response['category'] = post.category
     response['is_published'] = post.is_published
-    return response
+    return PostResponseSchema.model_validate(obj=response)
 
 
 @router.delete('/posts/{post_id}', status_code=status.HTTP_200_OK)

@@ -1,8 +1,8 @@
 from pydantic import Field
-from src.schemas.base import BasePublished, BaseCreatedAt
+from src.schemas.base import BasePublishedSchema, BaseCreatedAtSchema
 
 
-class Category(BasePublished, BaseCreatedAt):
+class CategorySchema(BasePublishedSchema, BaseCreatedAtSchema):
     title: str = Field(..., max_length=256, title='Заголовок')
     description: str = Field(..., title='Описание')
     slug: str = Field(

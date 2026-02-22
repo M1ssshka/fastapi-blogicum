@@ -1,6 +1,6 @@
 from pydantic import BaseModel, SecretStr
 
 
-class User(BaseModel):
+class UserSchema(BaseModel):
     username: str
     password: SecretStr

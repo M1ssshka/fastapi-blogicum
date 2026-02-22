@@ -1,6 +1,6 @@
 from pydantic import Field
-from src.schemas.base import BaseCreatedAt, BasePublished
+from src.schemas.base import BaseCreatedAtSchema, BasePublishedSchema
 
 
-class Location(BasePublished, BaseCreatedAt):
+class LocationSchema(BasePublishedSchema, BaseCreatedAtSchema):
     name: str = Field(..., title='Название места', max_length=256)

@@ -2,12 +2,12 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
-class BasePublished(BaseModel):
+class BasePublishedSchema(BaseModel):
     is_published: bool = Field(
         True,
         title='Опубликовано',
     )
 
 
-class BaseCreatedAt(BaseModel):
+class BaseCreatedAtSchema(BaseModel):
     created_at: datetime = Field(title='Добавлено')
