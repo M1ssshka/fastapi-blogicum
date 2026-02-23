@@ -1,3 +1,4 @@
+from datetime import datetime
 from fastapi import APIRouter, status, HTTPException
 
 from src.schemas.posts import (
@@ -11,7 +12,7 @@ router = APIRouter()
 fake_db = []
 
 
-@router.get('/post/{post_id}')
+@router.get('/get/{post_id}')
 def get_post(post_id: int):
     if post_id < len(fake_db):
         return fake_db[post_id]
@@ -23,7 +24,7 @@ def get_post(post_id: int):
 
 
 @router.post(
-    '/post/create',
+    '/create',
     status_code=status.HTTP_201_CREATED,
     response_model=PostResponseSchema,
 )
@@ -36,7 +37,7 @@ def create_post(post: PostCreateSchema) -> dict:
         'author': post.author,
         'location': post.location,
         'category': post.category,
-        'created_at': post.created_at,
+        'created_at': datetime.now(),
         'is_published': post.is_published,
     }
     fake_db.append(response)
@@ -44,7 +45,7 @@ def create_post(post: PostCreateSchema) -> dict:
 
 
 @router.put(
-    '/posts/{post_id}',
+    '/update/{post_id}',
     status_code=status.HTTP_200_OK,
     response_model=PostResponseSchema,
 )
@@ -63,7 +64,7 @@ def update_post(post_id: int, post: PostUpdateSchema) -> dict:
     return PostResponseSchema.model_validate(obj=response)
 
 
-@router.delete('/posts/{post_id}', status_code=status.HTTP_200_OK)
+@router.delete('/delete/{post_id}', status_code=status.HTTP_200_OK)
 def delete_post(post_id: int):
     if post_id >= len(fake_db):
         raise HTTPException(
