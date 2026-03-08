@@ -1,8 +1,10 @@
-from pydantic import Field
+from pydantic import Field, ConfigDict
 from schemas.base import BasePublishedSchema, BaseCreatedAtSchema
 
 
 class CategorySchema(BasePublishedSchema, BaseCreatedAtSchema):
+    model_config = ConfigDict(from_attributes=True)
+
     title: str = Field(..., max_length=256, description='Заголовок')
     description: str = Field(..., description='Описание')
     slug: str = Field(
