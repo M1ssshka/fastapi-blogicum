@@ -6,7 +6,7 @@ from infrastructure.sqlite.repositories.categories import CategoryRepository
 from schemas.categories import CategorySchema
 
 
-class GetCategoryBySlug:
+class GetCategoryBySlugUseCase:
     def __init__(self):
         self._database = database
         self._repo = CategoryRepository()

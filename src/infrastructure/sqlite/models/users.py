@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from infrastructure.sqlite.database import Base
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 
 class User(Base):
@@ -18,3 +18,6 @@ class User(Base):
     is_active: Mapped[bool] = mapped_column(nullable=False)
     date_joined: Mapped[datetime] = mapped_column(nullable=False)
     first_name: Mapped[str] = mapped_column(nullable=False)
+
+    posts: Mapped[list["Post"]] = relationship(back_populates="author")
+    comments: Mapped[list["Comment"]] = relationship(back_populates="author")

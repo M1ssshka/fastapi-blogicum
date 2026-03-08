@@ -9,12 +9,20 @@ from schemas.posts import (
 )
 
 from schemas.users import UserSchema
+from schemas.locations import LocationSchema
+from schemas.comments import CommentResponse
 
 from domain.user.use_cases.get_user_by_login import GetUserByLoginUseCase
-from domain.user.use_cases.get_category_by_slug import GetCategoryBySlug
+from domain.user.use_cases.get_category_by_slug import GetCategoryBySlugUseCase
+from domain.user.use_cases.get_location_by_id import GetLocationByIdUseCase
+from domain.user.use_cases.get_post_by_id import GetPostByIdUseCase
+from domain.user.use_cases.get_comment_by_id import GetCommentByIdUseCase
 from api.depends import (
     get_get_user_by_login_use_case,
     get_get_category_by_slug_use_case,
+    get_get_location_by_id_use_case,
+    get_get_post_by_id_use_case,
+    get_get_comment_by_id_use_case,
 )
 
 router = APIRouter()
@@ -106,8 +114,54 @@ async def get_user_by_login(
 )
 async def get_category_by_slug(
     slug: str,
-    use_case: GetCategoryBySlug = Depends(get_get_category_by_slug_use_case),
+    use_case: GetCategoryBySlugUseCase = Depends(
+        get_get_category_by_slug_use_case
+    ),
 ) -> CategorySchema:
     category = await use_case.execute(slug=slug)
 
     return category
+
+
+@router.get(
+    '/location/{location_id}',
+    status_code=status.HTTP_200_OK,
+    response_model=LocationSchema,
+)
+async def get_location_by_id(
+    location_id: int,
+    use_case: GetLocationByIdUseCase = Depends(
+        get_get_location_by_id_use_case
+    ),
+) -> LocationSchema:
+    location = await use_case.execute(location_id=location_id)
+
+    return location
+
+
+@router.get(
+    '/post/{post_id}',
+    status_code=status.HTTP_200_OK,
+    response_model=PostResponseSchema,
+)
+async def get_post_by_id(
+    post_id: int,
+    use_case: GetPostByIdUseCase = Depends(get_get_post_by_id_use_case),
+) -> PostResponseSchema:
+    post = await use_case.execute(post_id=post_id)
+
+    return post
+
+
+@router.get(
+    '/comment/{comment_id}',
+    status_code=status.HTTP_200_OK,
+    response_model=CommentResponse,
+)
+async def get_comment_by_id(
+    comment_id: int,
+    use_case: GetCommentByIdUseCase = Depends(get_get_comment_by_id_use_case),
+) -> CommentResponse:
+    comment = await use_case.execute(comment_id=comment_id)
+
+    return comment

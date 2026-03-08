@@ -1,4 +1,4 @@
-from pydantic import Field
+from pydantic import Field, ConfigDict
 from datetime import datetime
 # from fastapi import UploadFile, File
 
@@ -9,6 +9,8 @@ from schemas.users import UserSchema
 
 
 class PostCreateSchema(BasePublishedSchema):
+    model_config = ConfigDict(from_attributes=True)
+
     title: str = Field(..., max_length=256, description='Заголовок')
     text: str = Field(..., description='Текст')
     pub_date: datetime = Field(..., description='Дата и время публикации')
@@ -19,6 +21,8 @@ class PostCreateSchema(BasePublishedSchema):
 
 
 class PostUpdateSchema(BasePublishedSchema):
+    model_config = ConfigDict(from_attributes=True)
+
     title: str = Field(..., max_length=256, description='Заголовок')
     text: str = Field(..., description='Текст')
     location: LocationSchema | None = Field(None, description='Местоположение')
@@ -26,6 +30,8 @@ class PostUpdateSchema(BasePublishedSchema):
 
 
 class PostResponseSchema(BasePublishedSchema, BaseCreatedAtSchema):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int = Field(..., description='ID')
     title: str = Field(..., max_length=256, description='Заголовок')
     text: str = Field(..., description='Текст')
