@@ -12,7 +12,7 @@ class GetCommentByIdUseCase:
 
     async def execute(self, comment_id: int) -> CommentResponse:
         with self._database.session() as session:
-            comment = self._repo.get(session=session, comment_id=comment_id)
+            comment = self._repo.get_by_id_with_relations(session=session, comment_id=comment_id)
 
         if comment is None:
             raise HTTPException(

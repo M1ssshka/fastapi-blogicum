@@ -12,7 +12,7 @@ class GetPostByIdUseCase:
 
     async def execute(self, post_id: int) -> PostResponseSchema:
         with self._database.session() as session:
-            post = self._repo.get(session=session, post_id=post_id)
+            post = self._repo.get_by_id_with_relations(session=session, post_id=post_id)
 
         if post is None:
             raise HTTPException(

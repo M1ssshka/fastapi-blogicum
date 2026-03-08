@@ -1,18 +1,23 @@
-from typing import Type
-
 from sqlalchemy.orm import Session, joinedload
 
+from infrastructure.sqlite.repositories.base import BaseRepository
 from infrastructure.sqlite.models.posts import Post
 
 
-class PostRepository:
+class PostRepository(BaseRepository[Post]):
     def __init__(self):
-        self._model: Type[Post] = Post
+        super().__init__(Post)
 
-    def get(self, session: Session, post_id: int) -> Post | None:
-        query = session.query(self._model).options(
-            joinedload(self._model.author),
-            joinedload(self._model.category),
-            joinedload(self._model.location),
-        ).where(self._model.id == post_id)
+    def get_by_id_with_relations(
+        self, session: Session, post_id: int
+    ) -> Post | None:
+        query = (
+            session.query(self._model)
+            .options(
+                joinedload(self._model.author),
+                joinedload(self._model.category),
+                joinedload(self._model.location),
+            )
+            .where(self._model.id == post_id)
+        )
         return query.scalar()
