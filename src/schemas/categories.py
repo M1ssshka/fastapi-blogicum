@@ -1,5 +1,5 @@
 from pydantic import Field
-from src.schemas.base import BasePublishedSchema, BaseCreatedAtSchema
+from schemas.base import BasePublishedSchema, BaseCreatedAtSchema
 
 
 class CategorySchema(BasePublishedSchema, BaseCreatedAtSchema):

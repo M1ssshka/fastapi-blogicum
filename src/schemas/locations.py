@@ -1,5 +1,5 @@
 from pydantic import Field
-from src.schemas.base import BaseCreatedAtSchema, BasePublishedSchema
+from schemas.base import BaseCreatedAtSchema, BasePublishedSchema
 
 
 class LocationSchema(BasePublishedSchema, BaseCreatedAtSchema):

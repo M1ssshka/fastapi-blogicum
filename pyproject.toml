@@ -10,3 +10,5 @@ dependencies = [
     "uvicorn>=0.41.0",
 ]
 
+[tool.setuptools.packages.find]
+where = ["src"]

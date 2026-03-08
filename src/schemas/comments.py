@@ -1,7 +1,7 @@
 from pydantic import Field, BaseModel
 
-from src.schemas.base import BaseCreatedAtSchema, BasePublishedSchema
-from src.schemas.users import UserSchema
+from schemas.base import BaseCreatedAtSchema, BasePublishedSchema
+from schemas.users import UserSchema
 
 
 class CommentResponse(BasePublishedSchema, BaseCreatedAtSchema):

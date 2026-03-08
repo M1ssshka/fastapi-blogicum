@@ -1,7 +1,7 @@
 from datetime import datetime
 from fastapi import APIRouter, status, HTTPException
 
-from src.schemas.posts import (
+from schemas.posts import (
     PostCreateSchema,
     PostUpdateSchema,
     PostResponseSchema,
