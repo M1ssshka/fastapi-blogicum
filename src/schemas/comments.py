@@ -23,5 +23,6 @@ class CommentCreate(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     post_id: int = Field(..., description='Публикация')
-    author: UserSchema = Field(..., description='Автор комментария')
+    author_id: int = Field(..., description='ID автора комментария')
     text: str = Field(..., description='Текст комментария')
+    is_published: bool = Field(True, description='Опубликовано')

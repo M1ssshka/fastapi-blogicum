@@ -1,11 +1,10 @@
 from pydantic import Field, ConfigDict
 from datetime import datetime
-# from fastapi import UploadFile, File
 
-from schemas.locations import LocationSchema
-from schemas.categories import CategorySchema
 from schemas.base import BaseCreatedAtSchema, BasePublishedSchema
 from schemas.users import UserSchema
+from schemas.categories import CategorySchema
+from schemas.locations import LocationSchema
 
 
 class PostCreateSchema(BasePublishedSchema):
@@ -14,10 +13,10 @@ class PostCreateSchema(BasePublishedSchema):
     title: str = Field(..., max_length=256, description='Заголовок')
     text: str = Field(..., description='Текст')
     pub_date: datetime = Field(..., description='Дата и время публикации')
-    author: UserSchema = Field(..., description='Автор публикации')
-    location: LocationSchema | None = Field(None, description='Местоположение')
-    category: CategorySchema | None = Field(..., description='Категория')
-    # image: UploadFile | None = File(None, title='Фото')
+    author_id: int = Field(..., description='ID автора публикации')
+    location_id: int | None = Field(None, description='ID местоположения')
+    category_id: int | None = Field(None, description='ID категории')
+    image: str | None = Field(None, description='Путь к изображению')
 
 
 class PostUpdateSchema(BasePublishedSchema):
@@ -25,8 +24,8 @@ class PostUpdateSchema(BasePublishedSchema):
 
     title: str = Field(..., max_length=256, description='Заголовок')
     text: str = Field(..., description='Текст')
-    location: LocationSchema | None = Field(None, description='Местоположение')
-    category: CategorySchema | None = Field(..., description='Категория')
+    location_id: int | None = Field(None, description='ID местоположения')
+    category_id: int | None = Field(None, description='ID категории')
 
 
 class PostResponseSchema(BasePublishedSchema, BaseCreatedAtSchema):
@@ -42,5 +41,5 @@ class PostResponseSchema(BasePublishedSchema, BaseCreatedAtSchema):
     )
     author: UserSchema = Field(..., description='Автор публикации')
     location: LocationSchema | None = Field(None, description='Местоположение')
-    category: CategorySchema | None = Field(..., description='Категория')
-    # image: str | None = Field(None, title='Путь к изображению')
+    category: CategorySchema | None = Field(None, description='Категория')
+    image: str | None = Field(None, description='Путь к изображению')
