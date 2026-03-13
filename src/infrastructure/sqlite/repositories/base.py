@@ -1,7 +1,6 @@
 from typing import Type, TypeVar, Generic
 
 from sqlalchemy.orm import Session
-from sqlalchemy import select
 
 from infrastructure.sqlite.database import Base
 
@@ -18,13 +17,13 @@ class BaseRepository(Generic[ModelType]):
         return obj
 
     def get_by_id(self, session: Session, id: int) -> ModelType | None:
-        return session.get(self._model, id)
+        return session.query(self._model).get(id)
 
     def get_all(
         self, session: Session, limit: int = 100, offset: int = 0
     ) -> list[ModelType]:
-        query = select(self._model).limit(limit).offset(offset)
-        return list(session.scalars(query).all())
+        query = session.query(self._model).limit(limit).offset(offset).all()
+        return query
 
     def update(self, session: Session, id: int, **data) -> ModelType | None:
         obj = self.get_by_id(session, id)
