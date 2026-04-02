@@ -10,7 +10,9 @@ class UpdateCommentUseCase:
         self._database = database
         self._repo = CommentRepository()
 
-    async def execute(self, comment_id: int, dto: CommentUpdate) -> CommentResponse:
+    async def execute(
+        self, comment_id: int, dto: CommentUpdate
+    ) -> CommentResponse:
         with self._database.session() as session:
             comment = self._repo.update(
                 session=session,

@@ -12,4 +12,4 @@ class Location(Base):
     name: Mapped[str] = mapped_column(nullable=False)
     created_at: Mapped[datetime] = mapped_column(nullable=False)
 
-    posts: Mapped[list["Post"]] = relationship(back_populates="location")
+    posts: Mapped[list['Post']] = relationship(back_populates='location')

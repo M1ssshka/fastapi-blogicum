@@ -10,11 +10,14 @@ class GetAllCommentsUseCase:
         self._database = database
         self._repo = CommentRepository()
 
-    async def execute(self, limit: int = 100, offset: int = 0) -> List[CommentResponse]:
+    async def execute(
+        self, limit: int = 100, offset: int = 0
+    ) -> List[CommentResponse]:
         with self._database.session() as session:
-            comments = self._repo.get_all(session=session, limit=limit, offset=offset)
+            comments = self._repo.get_all(
+                session=session, limit=limit, offset=offset
+            )
 
         return [
-            CommentResponse.model_validate(obj=comment)
-            for comment in comments
+            CommentResponse.model_validate(obj=comment) for comment in comments
         ]

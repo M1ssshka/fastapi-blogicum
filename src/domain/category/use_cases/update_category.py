@@ -10,7 +10,9 @@ class UpdateCategoryUseCase:
         self._database = database
         self._repo = CategoryRepository()
 
-    async def execute(self, category_id: int, dto: CategoryUpdateSchema) -> CategorySchema:
+    async def execute(
+        self, category_id: int, dto: CategoryUpdateSchema
+    ) -> CategorySchema:
         with self._database.session() as session:
             category = self._repo.update(
                 session=session,

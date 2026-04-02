@@ -19,5 +19,5 @@ class User(Base):
     date_joined: Mapped[datetime] = mapped_column(nullable=False)
     first_name: Mapped[str] = mapped_column(nullable=False)
 
-    posts: Mapped[list["Post"]] = relationship(back_populates="author")
-    comments: Mapped[list["Comment"]] = relationship(back_populates="author")
+    posts: Mapped[list['Post']] = relationship(back_populates='author')
+    comments: Mapped[list['Comment']] = relationship(back_populates='author')

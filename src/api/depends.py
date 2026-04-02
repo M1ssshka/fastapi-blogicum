@@ -2,12 +2,16 @@
 from domain.user.use_cases.get_user_by_username import GetUserByUsernameUseCase
 
 # Category
-from domain.category.use_cases.get_category_by_slug import GetCategoryBySlugUseCase
+from domain.category.use_cases.get_category_by_slug import (
+    GetCategoryBySlugUseCase,
+)
 from domain.category.use_cases.get_category_by_id import GetCategoryByIdUseCase
 from domain.category.use_cases.create_category import CreateCategoryUseCase
 from domain.category.use_cases.update_category import UpdateCategoryUseCase
 from domain.category.use_cases.delete_category import DeleteCategoryUseCase
-from domain.category.use_cases.get_all_categories import GetAllCategoriesUseCase
+from domain.category.use_cases.get_all_categories import (
+    GetAllCategoriesUseCase,
+)
 
 # Location
 from domain.location.use_cases.get_location_by_id import GetLocationByIdUseCase

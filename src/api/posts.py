@@ -1,6 +1,10 @@
 from typing import List
 from fastapi import APIRouter, status, Depends, Query
-from schemas.posts import PostResponseSchema, PostCreateSchema, PostUpdateSchema
+from schemas.posts import (
+    PostResponseSchema,
+    PostCreateSchema,
+    PostUpdateSchema,
+)
 
 from domain.post.use_cases.get_post_by_id import GetPostByIdUseCase
 from domain.post.use_cases.create_post import CreatePostUseCase
@@ -19,7 +23,11 @@ from api.depends import (
 router = APIRouter()
 
 
-@router.get('/posts', status_code=status.HTTP_200_OK, response_model=List[PostResponseSchema])
+@router.get(
+    '/posts',
+    status_code=status.HTTP_200_OK,
+    response_model=List[PostResponseSchema],
+)
 async def get_all_posts(
     limit: int = Query(100, ge=1, le=1000),
     offset: int = Query(0, ge=0),
@@ -29,7 +37,11 @@ async def get_all_posts(
     return posts
 
 
-@router.get('/post/{post_id}', status_code=status.HTTP_200_OK, response_model=PostResponseSchema)
+@router.get(
+    '/post/{post_id}',
+    status_code=status.HTTP_200_OK,
+    response_model=PostResponseSchema,
+)
 async def get_post_by_id(
     post_id: int,
     use_case: GetPostByIdUseCase = Depends(get_get_post_by_id_use_case),
@@ -38,7 +50,11 @@ async def get_post_by_id(
     return post
 
 
-@router.post('/post', status_code=status.HTTP_201_CREATED, response_model=PostResponseSchema)
+@router.post(
+    '/post',
+    status_code=status.HTTP_201_CREATED,
+    response_model=PostResponseSchema,
+)
 async def create_post(
     dto: PostCreateSchema,
     use_case: CreatePostUseCase = Depends(get_create_post_use_case),
@@ -47,7 +63,11 @@ async def create_post(
     return post
 
 
-@router.put('/post/{post_id}', status_code=status.HTTP_200_OK, response_model=PostResponseSchema)
+@router.put(
+    '/post/{post_id}',
+    status_code=status.HTTP_200_OK,
+    response_model=PostResponseSchema,
+)
 async def update_post(
     post_id: int,
     dto: PostUpdateSchema,

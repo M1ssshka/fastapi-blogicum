@@ -10,7 +10,9 @@ class UpdatePostUseCase:
         self._database = database
         self._repo = PostRepository()
 
-    async def execute(self, post_id: int, dto: PostUpdateSchema) -> PostResponseSchema:
+    async def execute(
+        self, post_id: int, dto: PostUpdateSchema
+    ) -> PostResponseSchema:
         with self._database.session() as session:
             post = self._repo.update(
                 session=session,

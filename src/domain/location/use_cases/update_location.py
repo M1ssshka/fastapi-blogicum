@@ -10,7 +10,9 @@ class UpdateLocationUseCase:
         self._database = database
         self._repo = LocationRepository()
 
-    async def execute(self, location_id: int, dto: LocationUpdateSchema) -> LocationSchema:
+    async def execute(
+        self, location_id: int, dto: LocationUpdateSchema
+    ) -> LocationSchema:
         with self._database.session() as session:
             location = self._repo.update(
                 session=session,

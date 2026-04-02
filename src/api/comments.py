@@ -19,7 +19,11 @@ from api.depends import (
 router = APIRouter()
 
 
-@router.get('/comments', status_code=status.HTTP_200_OK, response_model=List[CommentResponse])
+@router.get(
+    '/comments',
+    status_code=status.HTTP_200_OK,
+    response_model=List[CommentResponse],
+)
 async def get_all_comments(
     limit: int = Query(100, ge=1, le=1000),
     offset: int = Query(0, ge=0),
@@ -29,7 +33,11 @@ async def get_all_comments(
     return comments
 
 
-@router.get('/comment/{comment_id}', status_code=status.HTTP_200_OK, response_model=CommentResponse)
+@router.get(
+    '/comment/{comment_id}',
+    status_code=status.HTTP_200_OK,
+    response_model=CommentResponse,
+)
 async def get_comment_by_id(
     comment_id: int,
     use_case: GetCommentByIdUseCase = Depends(get_get_comment_by_id_use_case),
@@ -38,7 +46,11 @@ async def get_comment_by_id(
     return comment
 
 
-@router.post('/comment', status_code=status.HTTP_201_CREATED, response_model=CommentResponse)
+@router.post(
+    '/comment',
+    status_code=status.HTTP_201_CREATED,
+    response_model=CommentResponse,
+)
 async def create_comment(
     dto: CommentCreate,
     use_case: CreateCommentUseCase = Depends(get_create_comment_use_case),
@@ -47,7 +59,11 @@ async def create_comment(
     return comment
 
 
-@router.put('/comment/{comment_id}', status_code=status.HTTP_200_OK, response_model=CommentResponse)
+@router.put(
+    '/comment/{comment_id}',
+    status_code=status.HTTP_200_OK,
+    response_model=CommentResponse,
+)
 async def update_comment(
     comment_id: int,
     dto: CommentUpdate,

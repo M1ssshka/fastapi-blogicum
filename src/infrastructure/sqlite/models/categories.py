@@ -14,4 +14,4 @@ class Category(Base):
     slug: Mapped[str] = mapped_column(nullable=False, unique=True)
     created_at: Mapped[datetime] = mapped_column(nullable=False)
 
-    posts: Mapped[list["Post"]] = relationship(back_populates="category")
+    posts: Mapped[list['Post']] = relationship(back_populates='category')

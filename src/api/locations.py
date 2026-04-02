@@ -1,6 +1,10 @@
 from typing import List
 from fastapi import APIRouter, status, Depends, Query
-from schemas.locations import LocationSchema, LocationCreateSchema, LocationUpdateSchema
+from schemas.locations import (
+    LocationSchema,
+    LocationCreateSchema,
+    LocationUpdateSchema,
+)
 
 from domain.location.use_cases.get_location_by_id import GetLocationByIdUseCase
 from domain.location.use_cases.create_location import CreateLocationUseCase
@@ -19,7 +23,11 @@ from api.depends import (
 router = APIRouter()
 
 
-@router.get('/locations', status_code=status.HTTP_200_OK, response_model=List[LocationSchema])
+@router.get(
+    '/locations',
+    status_code=status.HTTP_200_OK,
+    response_model=List[LocationSchema],
+)
 async def get_all_locations(
     limit: int = Query(100, ge=1, le=1000),
     offset: int = Query(0, ge=0),
@@ -29,16 +37,26 @@ async def get_all_locations(
     return locations
 
 
-@router.get('/location/{location_id}', status_code=status.HTTP_200_OK, response_model=LocationSchema)
+@router.get(
+    '/location/{location_id}',
+    status_code=status.HTTP_200_OK,
+    response_model=LocationSchema,
+)
 async def get_location_by_id(
     location_id: int,
-    use_case: GetLocationByIdUseCase = Depends(get_get_location_by_id_use_case),
+    use_case: GetLocationByIdUseCase = Depends(
+        get_get_location_by_id_use_case
+    ),
 ) -> LocationSchema:
     location = await use_case.execute(location_id=location_id)
     return location
 
 
-@router.post('/location', status_code=status.HTTP_201_CREATED, response_model=LocationSchema)
+@router.post(
+    '/location',
+    status_code=status.HTTP_201_CREATED,
+    response_model=LocationSchema,
+)
 async def create_location(
     dto: LocationCreateSchema,
     use_case: CreateLocationUseCase = Depends(get_create_location_use_case),
@@ -47,7 +65,11 @@ async def create_location(
     return location
 
 
-@router.put('/location/{location_id}', status_code=status.HTTP_200_OK, response_model=LocationSchema)
+@router.put(
+    '/location/{location_id}',
+    status_code=status.HTTP_200_OK,
+    response_model=LocationSchema,
+)
 async def update_location(
     location_id: int,
     dto: LocationUpdateSchema,

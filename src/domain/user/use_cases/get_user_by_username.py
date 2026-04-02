@@ -12,7 +12,9 @@ class GetUserByUsernameUseCase:
 
     async def execute(self, username: str) -> UserSchema:
         with self._database.session() as session:
-            user = self._repo.get_by_username(session=session, username=username)
+            user = self._repo.get_by_username(
+                session=session, username=username
+            )
 
         if user is None:
             raise HTTPException(
