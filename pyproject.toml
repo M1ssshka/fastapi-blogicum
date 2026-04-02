@@ -12,5 +12,12 @@ dependencies = [
     "uvicorn>=0.41.0",
 ]
 
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["fastapi_app/src"]
+
+[tool.setuptools.package-dir]
+"" = "fastapi_app/src"
