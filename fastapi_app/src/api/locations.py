@@ -1,9 +1,13 @@
 from typing import List
-from fastapi import APIRouter, status, Depends, Query
+from fastapi import APIRouter, HTTPException, status, Depends, Query
 from schemas.locations import (
     LocationSchema,
     LocationCreateSchema,
     LocationUpdateSchema,
+)
+from core.exceptions.domain_exceptions import (
+    LocationNotFoundByIdException,
+    LocationNameAlreadyExistsException,
 )
 
 from domain.location.use_cases.get_location_by_id import GetLocationByIdUseCase
@@ -48,7 +52,12 @@ async def get_location_by_id(
         get_get_location_by_id_use_case
     ),
 ) -> LocationSchema:
-    location = await use_case.execute(location_id=location_id)
+    try:
+        location = await use_case.execute(location_id=location_id)
+    except LocationNotFoundByIdException as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=exc.get_detail()
+        )
     return location
 
 
@@ -61,7 +70,12 @@ async def create_location(
     dto: LocationCreateSchema,
     use_case: CreateLocationUseCase = Depends(get_create_location_use_case),
 ) -> LocationSchema:
-    location = await use_case.execute(dto=dto)
+    try:
+        location = await use_case.execute(dto=dto)
+    except LocationNameAlreadyExistsException as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail=exc.get_detail()
+        )
     return location
 
 
@@ -75,7 +89,12 @@ async def update_location(
     dto: LocationUpdateSchema,
     use_case: UpdateLocationUseCase = Depends(get_update_location_use_case),
 ) -> LocationSchema:
-    location = await use_case.execute(location_id=location_id, dto=dto)
+    try:
+        location = await use_case.execute(location_id=location_id, dto=dto)
+    except LocationNotFoundByIdException as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=exc.get_detail()
+        )
     return location
 
 
@@ -84,5 +103,10 @@ async def delete_location(
     location_id: int,
     use_case: DeleteLocationUseCase = Depends(get_delete_location_use_case),
 ) -> dict:
-    await use_case.execute(location_id=location_id)
+    try:
+        await use_case.execute(location_id=location_id)
+    except LocationNotFoundByIdException as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=exc.get_detail()
+        )
     return {'message': 'Локация успешно удалена'}

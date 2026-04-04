@@ -1,9 +1,9 @@
 from datetime import datetime
 
-from fastapi import HTTPException, status
-
 from infrastructure.sqlite.database import database
 from infrastructure.sqlite.repositories.posts import PostRepository
+from infrastructure.sqlite.repositories.categories import CategoryRepository
+from infrastructure.sqlite.repositories.locations import LocationRepository
 from schemas.posts import PostResponseSchema, PostCreateSchema
 
 
@@ -11,9 +11,19 @@ class CreatePostUseCase:
     def __init__(self):
         self._database = database
         self._repo = PostRepository()
+        self._category_repo = CategoryRepository()
+        self._location_repo = LocationRepository()
 
     async def execute(self, dto: PostCreateSchema) -> PostResponseSchema:
         with self._database.session() as session:
+            # Валидация category_id если передан
+            if dto.category_id is not None:
+                self._category_repo.get_by_id(session, dto.category_id)
+
+            # Валидация location_id если передан
+            if dto.location_id is not None:
+                self._location_repo.get_by_id(session, dto.location_id)
+
             post = self._repo.create(
                 session=session,
                 title=dto.title,

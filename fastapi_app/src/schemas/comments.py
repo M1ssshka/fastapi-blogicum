@@ -16,7 +16,7 @@ class CommentResponse(BasePublishedSchema, BaseCreatedAtSchema):
 class CommentUpdate(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    text: str = Field(..., description='Текст комментария')
+    text: str = Field(..., min_length=1, max_length=1000, description='Текст комментария')
 
 
 class CommentCreate(BaseModel):
@@ -24,5 +24,5 @@ class CommentCreate(BaseModel):
 
     post_id: int = Field(..., description='Публикация')
     author_id: int = Field(..., description='ID автора комментария')
-    text: str = Field(..., description='Текст комментария')
+    text: str = Field(..., min_length=1, max_length=1000, description='Текст комментария')
     is_published: bool = Field(True, description='Опубликовано')

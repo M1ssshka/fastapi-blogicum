@@ -1,6 +1,7 @@
 from typing import List
-from fastapi import APIRouter, status, Depends, Query
+from fastapi import APIRouter, HTTPException, status, Depends, Query
 from schemas.comments import CommentResponse, CommentCreate, CommentUpdate
+from core.exceptions.domain_exceptions import CommentNotFoundByIdException
 
 from domain.comment.use_cases.get_comment_by_id import GetCommentByIdUseCase
 from domain.comment.use_cases.create_comment import CreateCommentUseCase
@@ -42,7 +43,12 @@ async def get_comment_by_id(
     comment_id: int,
     use_case: GetCommentByIdUseCase = Depends(get_get_comment_by_id_use_case),
 ) -> CommentResponse:
-    comment = await use_case.execute(comment_id=comment_id)
+    try:
+        comment = await use_case.execute(comment_id=comment_id)
+    except CommentNotFoundByIdException as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=exc.get_detail()
+        )
     return comment
 
 
@@ -69,7 +75,12 @@ async def update_comment(
     dto: CommentUpdate,
     use_case: UpdateCommentUseCase = Depends(get_update_comment_use_case),
 ) -> CommentResponse:
-    comment = await use_case.execute(comment_id=comment_id, dto=dto)
+    try:
+        comment = await use_case.execute(comment_id=comment_id, dto=dto)
+    except CommentNotFoundByIdException as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=exc.get_detail()
+        )
     return comment
 
 
@@ -78,5 +89,10 @@ async def delete_comment(
     comment_id: int,
     use_case: DeleteCommentUseCase = Depends(get_delete_comment_use_case),
 ) -> dict:
-    await use_case.execute(comment_id=comment_id)
+    try:
+        await use_case.execute(comment_id=comment_id)
+    except CommentNotFoundByIdException as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=exc.get_detail()
+        )
     return {'message': 'Комментарий успешно удалён'}

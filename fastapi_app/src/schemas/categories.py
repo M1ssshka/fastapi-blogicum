@@ -5,10 +5,12 @@ from schemas.base import BasePublishedSchema, BaseCreatedAtSchema
 class CategoryCreateSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    title: str = Field(..., max_length=256, description='Заголовок')
-    description: str = Field(..., description='Описание')
+    title: str = Field(..., min_length=1, max_length=256, description='Заголовок')
+    description: str = Field(..., min_length=1, max_length=1000, description='Описание')
     slug: str = Field(
         ...,
+        min_length=1,
+        max_length=64,
         pattern=r'^[a-zA-Z0-9_-]+$',
         description='Идентификатор страницы для URL; разрешены символы латиницы, цифры, дефис и подчёркивание.',
     )
@@ -18,8 +20,8 @@ class CategoryCreateSchema(BaseModel):
 class CategoryUpdateSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    title: str = Field(..., max_length=256, description='Заголовок')
-    description: str = Field(..., description='Описание')
+    title: str = Field(..., min_length=1, max_length=256, description='Заголовок')
+    description: str = Field(..., min_length=1, max_length=1000, description='Описание')
     is_published: bool = Field(True, description='Опубликовано')
 
 

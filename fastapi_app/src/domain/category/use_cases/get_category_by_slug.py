@@ -1,5 +1,3 @@
-from fastapi import HTTPException, status
-
 from infrastructure.sqlite.database import database
 from infrastructure.sqlite.repositories.categories import CategoryRepository
 from schemas.categories import CategorySchema
@@ -13,11 +11,5 @@ class GetCategoryBySlugUseCase:
     async def execute(self, slug: str) -> CategorySchema:
         with self._database.session() as session:
             category = self._repo.get_by_slug(session=session, slug=slug)
-
-        if category is None:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f'Категория {slug} не найдена',
-            )
 
         return CategorySchema.model_validate(obj=category)

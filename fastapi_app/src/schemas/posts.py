@@ -10,20 +10,20 @@ from schemas.locations import LocationSchema
 class PostCreateSchema(BasePublishedSchema):
     model_config = ConfigDict(from_attributes=True)
 
-    title: str = Field(..., max_length=256, description='Заголовок')
-    text: str = Field(..., description='Текст')
+    title: str = Field(..., min_length=1, max_length=256, description='Заголовок')
+    text: str = Field(..., min_length=1, description='Текст')
     pub_date: datetime = Field(..., description='Дата и время публикации')
     author_id: int = Field(..., description='ID автора публикации')
     location_id: int | None = Field(None, description='ID местоположения')
     category_id: int | None = Field(None, description='ID категории')
-    image: str | None = Field(None, description='Путь к изображению')
+    image: str | None = Field(None, max_length=512, description='Путь к изображению')
 
 
 class PostUpdateSchema(BasePublishedSchema):
     model_config = ConfigDict(from_attributes=True)
 
-    title: str = Field(..., max_length=256, description='Заголовок')
-    text: str = Field(..., description='Текст')
+    title: str = Field(..., min_length=1, max_length=256, description='Заголовок')
+    text: str = Field(..., min_length=1, description='Текст')
     location_id: int | None = Field(None, description='ID местоположения')
     category_id: int | None = Field(None, description='ID категории')
 

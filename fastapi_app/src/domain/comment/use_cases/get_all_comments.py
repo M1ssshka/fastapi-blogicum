@@ -14,7 +14,7 @@ class GetAllCommentsUseCase:
         self, limit: int = 100, offset: int = 0
     ) -> List[CommentResponse]:
         with self._database.session() as session:
-            comments = self._repo.get_all(
+            comments = self._repo.get_all_with_relations(
                 session=session, limit=limit, offset=offset
             )
 

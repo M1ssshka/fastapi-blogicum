@@ -1,5 +1,10 @@
 from typing import List
-from fastapi import APIRouter, status, Depends, Query
+from core.exceptions.domain_exceptions import (
+    PostNotFoundByIdException,
+    CategoryNotFoundByIdException,
+    LocationNotFoundByIdException,
+)
+from fastapi import APIRouter, HTTPException, status, Depends, Query
 from schemas.posts import (
     PostResponseSchema,
     PostCreateSchema,
@@ -46,7 +51,12 @@ async def get_post_by_id(
     post_id: int,
     use_case: GetPostByIdUseCase = Depends(get_get_post_by_id_use_case),
 ) -> PostResponseSchema:
-    post = await use_case.execute(post_id=post_id)
+    try:
+        post = await use_case.execute(post_id=post_id)
+    except PostNotFoundByIdException as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=exc.get_detail()
+        )
     return post
 
 
@@ -59,7 +69,12 @@ async def create_post(
     dto: PostCreateSchema,
     use_case: CreatePostUseCase = Depends(get_create_post_use_case),
 ) -> PostResponseSchema:
-    post = await use_case.execute(dto=dto)
+    try:
+        post = await use_case.execute(dto=dto)
+    except (CategoryNotFoundByIdException, LocationNotFoundByIdException) as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=exc.get_detail()
+        )
     return post
 
 
@@ -73,7 +88,16 @@ async def update_post(
     dto: PostUpdateSchema,
     use_case: UpdatePostUseCase = Depends(get_update_post_use_case),
 ) -> PostResponseSchema:
-    post = await use_case.execute(post_id=post_id, dto=dto)
+    try:
+        post = await use_case.execute(post_id=post_id, dto=dto)
+    except PostNotFoundByIdException as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=exc.get_detail()
+        )
+    except (CategoryNotFoundByIdException, LocationNotFoundByIdException) as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=exc.get_detail()
+        )
     return post
 
 
@@ -82,5 +106,10 @@ async def delete_post(
     post_id: int,
     use_case: DeletePostUseCase = Depends(get_delete_post_use_case),
 ) -> dict:
-    await use_case.execute(post_id=post_id)
+    try:
+        await use_case.execute(post_id=post_id)
+    except PostNotFoundByIdException as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=exc.get_detail()
+        )
     return {'message': 'Пост успешно удалён'}
