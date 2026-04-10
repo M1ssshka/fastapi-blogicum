@@ -1,5 +1,3 @@
-from fastapi import HTTPException, status
-
 from infrastructure.sqlite.database import database
 from infrastructure.sqlite.repositories.comments import CommentRepository
 from schemas.comments import CommentResponse, CommentUpdate
@@ -19,12 +17,6 @@ class UpdateCommentUseCase:
                 id=comment_id,
                 text=dto.text,
             )
-
-            if comment is None:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail=f'Комментарий с id {comment_id} не найден',
-                )
 
             comment_with_relations = self._repo.get_by_id_with_relations(
                 session=session, comment_id=comment.id

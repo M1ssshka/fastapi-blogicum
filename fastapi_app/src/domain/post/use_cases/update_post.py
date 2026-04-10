@@ -3,10 +3,6 @@ from infrastructure.sqlite.repositories.posts import PostRepository
 from infrastructure.sqlite.repositories.categories import CategoryRepository
 from infrastructure.sqlite.repositories.locations import LocationRepository
 from schemas.posts import PostResponseSchema, PostUpdateSchema
-from core.exceptions.domain_exceptions import (
-    CategoryNotFoundByIdException,
-    LocationNotFoundByIdException,
-)
 
 
 class UpdatePostUseCase:
@@ -20,14 +16,12 @@ class UpdatePostUseCase:
         self, post_id: int, dto: PostUpdateSchema
     ) -> PostResponseSchema:
         with self._database.session() as session:
-            # Валидация category_id если передан
             if dto.category_id is not None:
                 self._category_repo.get_by_id(session, dto.category_id)
-            
-            # Валидация location_id если передан
+
             if dto.location_id is not None:
                 self._location_repo.get_by_id(session, dto.location_id)
-            
+
             post = self._repo.update(
                 session=session,
                 id=post_id,

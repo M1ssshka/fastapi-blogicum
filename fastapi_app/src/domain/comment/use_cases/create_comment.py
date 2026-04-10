@@ -1,7 +1,5 @@
 from datetime import datetime
 
-from fastapi import HTTPException, status
-
 from infrastructure.sqlite.database import database
 from infrastructure.sqlite.repositories.comments import CommentRepository
 from schemas.comments import CommentResponse, CommentCreate
