@@ -3,22 +3,22 @@ from sqlalchemy.exc import IntegrityError
 
 from infrastructure.sqlite.repositories.base import BaseRepository
 from infrastructure.sqlite.models.categories import Category
-from core.exceptions.domain_exceptions import (
-    CategoryNotFoundByIdException,
-    CategoryNotFoundBySlugException,
+
+from core.exceptions.database_exceptions import (
+    CategorySlugConflictException,
+    CategoryNotFoundException,
 )
-from core.exceptions.database_exceptions import CategorySlugConflictException
 
 
 class CategoryRepository(BaseRepository[Category]):
     def __init__(self):
-        super().__init__(Category, CategoryNotFoundByIdException)
+        super().__init__(Category, CategoryNotFoundException)
 
     def get_by_slug(self, session: Session, slug: str) -> Category:
         query = session.query(self._model).where(self._model.slug == slug)
         category = query.scalar()
         if not category:
-            raise CategoryNotFoundBySlugException(slug)
+            raise CategoryNotFoundException(slug)
         return category
 
     def create(self, session: Session, **kwargs) -> Category:

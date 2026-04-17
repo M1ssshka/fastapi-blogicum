@@ -1,8 +1,8 @@
+from core.exceptions.domain_exceptions import UserNotFoundByLoginException
 from infrastructure.sqlite.database import database
 from infrastructure.sqlite.repositories.users import UserRepository
 from schemas.users import UserSchema
 from core.exceptions.database_exceptions import UserNotFoundException
-from core.exceptions.domain_exceptions import UserNotFoundByLoginException
 
 
 class GetUserByUsernameUseCase:
@@ -17,6 +17,6 @@ class GetUserByUsernameUseCase:
                     session=session, username=username
                 )
         except UserNotFoundException:
-            raise UserNotFoundByLoginException(username=username)
+            raise UserNotFoundByLoginException(username)
 
         return UserSchema.model_validate(obj=user)
