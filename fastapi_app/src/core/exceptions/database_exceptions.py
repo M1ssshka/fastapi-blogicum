@@ -15,10 +15,6 @@ class CategoryNotFoundException(BaseDatabaseException):
     pass
 
 
-class CommentNotFoundException(BaseDatabaseException):
-    pass
-
-
 class LocationNotFoundException(BaseDatabaseException):
     pass
 

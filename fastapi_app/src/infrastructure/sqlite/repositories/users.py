@@ -2,12 +2,15 @@ from sqlalchemy.orm import Session
 
 from infrastructure.sqlite.repositories.base import BaseRepository
 from infrastructure.sqlite.models.users import User
-from core.exceptions.database_exceptions import UserNotFoundException
+from core.exceptions.domain_exceptions import (
+    UserNotFoundByIdException,
+    UserNotFoundByLoginException,
+)
 
 
 class UserRepository(BaseRepository[User]):
     def __init__(self):
-        super().__init__(User, UserNotFoundException)
+        super().__init__(User, UserNotFoundByIdException)
 
     def get_by_username(self, session: Session, username: str) -> User:
         user = (
@@ -16,5 +19,5 @@ class UserRepository(BaseRepository[User]):
             .scalar()
         )
         if not user:
-            raise UserNotFoundException()
+            raise UserNotFoundByLoginException(username)
         return user

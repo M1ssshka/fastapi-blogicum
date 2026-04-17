@@ -2,12 +2,12 @@ from sqlalchemy.orm import Session, joinedload
 
 from infrastructure.sqlite.repositories.base import BaseRepository
 from infrastructure.sqlite.models.comments import Comment
-from core.exceptions.database_exceptions import CommentNotFoundException
+from core.exceptions.domain_exceptions import CommentNotFoundByIdException
 
 
 class CommentRepository(BaseRepository[Comment]):
     def __init__(self):
-        super().__init__(Comment, CommentNotFoundException)
+        super().__init__(Comment, CommentNotFoundByIdException)
 
     def get_all_with_relations(
         self, session: Session, limit: int = 100, offset: int = 0
@@ -37,5 +37,5 @@ class CommentRepository(BaseRepository[Comment]):
         )
         comment = query.scalar()
         if not comment:
-            raise CommentNotFoundException()
+            raise CommentNotFoundByIdException(comment_id)
         return comment

@@ -1,5 +1,3 @@
-from core.exceptions.domain_exceptions import CategoryNotFoundBySlugException
-from core.exceptions.database_exceptions import CategoryNotFoundException
 from infrastructure.sqlite.database import database
 from infrastructure.sqlite.repositories.categories import CategoryRepository
 from schemas.categories import CategorySchema
@@ -11,10 +9,7 @@ class GetCategoryBySlugUseCase:
         self._repo = CategoryRepository()
 
     async def execute(self, slug: str) -> CategorySchema:
-        try:
-            with self._database.session() as session:
-                category = self._repo.get_by_slug(session=session, slug=slug)
-        except CategoryNotFoundException:
-            raise CategoryNotFoundBySlugException(slug)
+        with self._database.session() as session:
+            category = self._repo.get_by_slug(session=session, slug=slug)
 
         return CategorySchema.model_validate(obj=category)
