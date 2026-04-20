@@ -1,38 +1,35 @@
 from pydantic import Field, ConfigDict, BaseModel
-from schemas.base import BasePublishedSchema, BaseCreatedAtSchema
+from schemas.base import BasePublishedSchema, BaseCreatedAtSchema, SlugStr
 
 
-class CategoryCreateSchema(BaseModel):
+class CategoryCreateSchema(BasePublishedSchema, BaseCreatedAtSchema):
     model_config = ConfigDict(from_attributes=True)
 
-    title: str = Field(..., min_length=1, max_length=256, description='Заголовок')
-    description: str = Field(..., min_length=1, max_length=1000, description='Описание')
-    slug: str = Field(
-        ...,
-        min_length=1,
-        max_length=64,
-        pattern=r'^[a-zA-Z0-9_-]+$',
-        description='Идентификатор страницы для URL; разрешены символы латиницы, цифры, дефис и подчёркивание.',
+    title: str = Field(
+        ..., min_length=1, max_length=256, description='Заголовок'
     )
-    is_published: bool = Field(True, description='Опубликовано')
+    description: str = Field(
+        ..., min_length=1, max_length=1000, description='Описание'
+    )
+    slug: SlugStr
 
 
 class CategoryUpdateSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    title: str = Field(..., min_length=1, max_length=256, description='Заголовок')
-    description: str = Field(..., min_length=1, max_length=1000, description='Описание')
+    title: str = Field(
+        ..., min_length=1, max_length=256, description='Заголовок'
+    )
+    description: str = Field(
+        ..., min_length=1, max_length=1000, description='Описание'
+    )
     is_published: bool = Field(True, description='Опубликовано')
 
 
-class CategorySchema(BasePublishedSchema, BaseCreatedAtSchema):
+class CategorySchema(CategoryCreateSchema):
     model_config = ConfigDict(from_attributes=True)
 
     id: int = Field(..., description='ID')
     title: str = Field(..., max_length=256, description='Заголовок')
     description: str = Field(..., description='Описание')
-    slug: str = Field(
-        ...,
-        pattern=r'^[a-zA-Z0-9_-]+$',
-        description='Идентификатор страницы для URL; разрешены символы латиницы, цифры, дефис и подчёркивание.',
-    )
+    slug: SlugStr

@@ -5,6 +5,7 @@ from schemas.categories import (
     CategoryCreateSchema,
     CategoryUpdateSchema,
 )
+from schemas.base import SlugStr
 from core.exceptions.domain_exceptions import (
     CategoryNotFoundByIdException,
     CategoryNotFoundBySlugException,
@@ -76,7 +77,7 @@ async def get_category_by_id(
     response_model=CategorySchema,
 )
 async def get_category_by_slug(
-    slug: str,
+    slug: SlugStr,
     use_case: GetCategoryBySlugUseCase = Depends(
         get_get_category_by_slug_use_case
     ),

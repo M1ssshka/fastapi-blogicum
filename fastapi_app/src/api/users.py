@@ -1,5 +1,6 @@
 from fastapi import APIRouter, status, Depends, HTTPException
 from schemas.users import UserSchema
+from schemas.base import UsernameStr
 
 from domain.user.use_cases.get_user_by_username import GetUserByUsernameUseCase
 from core.exceptions.domain_exceptions import UserNotFoundByLoginException
@@ -17,7 +18,7 @@ router = APIRouter()
     response_model=UserSchema,
 )
 async def get_user_by_username(
-    username: str,
+    username: UsernameStr,
     use_case: GetUserByUsernameUseCase = Depends(
         get_get_user_by_username_use_case
     ),
