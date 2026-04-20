@@ -55,6 +55,6 @@ UsernameStr = Annotated[
 
 
 ValidatedEmail = Annotated[
-    EmailStr,
+    EmailStr | None,
     Field(description='Email адрес'),
 ]

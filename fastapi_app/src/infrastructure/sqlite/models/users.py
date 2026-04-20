@@ -13,7 +13,7 @@ class User(Base):
     is_superuser: Mapped[bool] = mapped_column(nullable=False)
     username: Mapped[str] = mapped_column(nullable=False, unique=True)
     last_name: Mapped[str] = mapped_column(nullable=False)
-    email: Mapped[str] = mapped_column(nullable=False)
+    email: Mapped[str | None] = mapped_column(nullable=True)
     is_staff: Mapped[bool] = mapped_column(nullable=False)
     is_active: Mapped[bool] = mapped_column(nullable=False)
     date_joined: Mapped[datetime] = mapped_column(nullable=False)

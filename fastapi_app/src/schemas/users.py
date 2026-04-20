@@ -12,7 +12,7 @@ class UserSchema(BaseModel):
     password: SecretStr
     first_name: str = Field(..., min_length=1, max_length=150, description='Имя')
     last_name: str = Field(..., min_length=1, max_length=150, description='Фамилия')
-    email: ValidatedEmail
+    email: ValidatedEmail | None = None
     is_staff: bool
     is_active: bool
     is_superuser: bool
