@@ -5,6 +5,7 @@ from api.users import router as users_router
 from api.locations import router as locations_router
 from api.categories import router as categories_router
 from api.comments import router as comments_router
+from api.auth import router as auth_router
 
 
 def create_app() -> FastAPI:
@@ -17,6 +18,7 @@ def create_app() -> FastAPI:
         allow_headers=['*'],
     )
 
+    app.include_router(auth_router, tags=['Auth'])
     app.include_router(posts_router, tags=['Posts'])
     app.include_router(users_router, tags=['Users'])
     app.include_router(locations_router, tags=['Locations'])

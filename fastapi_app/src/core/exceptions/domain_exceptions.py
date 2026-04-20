@@ -94,3 +94,10 @@ class LocationNameAlreadyExistsException(BaseDomainException):
             name=name
         )
         super().__init__(detail=self._exception_text_template)
+
+
+class WrongPasswordException(BaseDomainException):
+    _exception_text = 'Неверный пароль'
+
+    def __init__(self) -> None:
+        super().__init__(detail=self._exception_text)

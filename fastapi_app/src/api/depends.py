@@ -1,5 +1,6 @@
 # User
 from domain.user.use_cases.get_user_by_username import GetUserByUsernameUseCase
+from domain.user.use_cases.create_user import CreateUserUseCase
 
 # Category
 from domain.category.use_cases.get_category_by_slug import (
@@ -35,9 +36,17 @@ from domain.comment.use_cases.delete_comment import DeleteCommentUseCase
 from domain.comment.use_cases.get_all_comments import GetAllCommentsUseCase
 
 
+from domain.auth.use_cases.authenticate_user import AuthenticateUserUseCase
+from domain.auth.use_cases.create_access_token import CreateAccessTokenUseCase
+
+
 # User factories
 def get_get_user_by_username_use_case() -> GetUserByUsernameUseCase:
     return GetUserByUsernameUseCase()
+
+
+def get_create_user_use_case() -> CreateUserUseCase:
+    return CreateUserUseCase()
 
 
 # Category factories
@@ -126,3 +135,11 @@ def get_delete_comment_use_case() -> DeleteCommentUseCase:
 
 def get_get_all_comments_use_case() -> GetAllCommentsUseCase:
     return GetAllCommentsUseCase()
+
+
+def authenticate_user_use_case() -> AuthenticateUserUseCase:
+    return AuthenticateUserUseCase()
+
+
+def create_access_token_use_case() -> CreateAccessTokenUseCase:
+    return CreateAccessTokenUseCase()

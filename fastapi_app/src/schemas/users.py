@@ -18,3 +18,23 @@ class UserSchema(BaseModel):
     is_superuser: bool
     date_joined: datetime
     last_login: datetime | None = None
+
+
+class UserCreateSchema(BaseModel):
+    username: UsernameStr = Field(..., description='Имя пользователя')
+    password: str = Field(..., min_length=8, max_length=128, description='Пароль')
+    email: ValidatedEmail | None = Field(None, description='Email')
+    first_name: str = Field('', max_length=150, description='Имя')
+    last_name: str = Field('', max_length=150, description='Фамилия')
+
+
+class UserResponseSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    username: UsernameStr
+    first_name: str
+    last_name: str
+    email: ValidatedEmail | None = None
+    is_active: bool
+    date_joined: datetime
