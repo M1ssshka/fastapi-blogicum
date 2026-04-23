@@ -108,3 +108,15 @@ class ForbiddenActionException(BaseDomainException):
 
     def __init__(self) -> None:
         super().__init__(detail=self._exception_text)
+
+
+class UserAlreadyExistsException(BaseDomainException):
+    _exception_text_template = (
+        'Пользователь с username: {username} уже существует'
+    )
+
+    def __init__(self, username: str) -> None:
+        self._exception_text_template = self._exception_text_template.format(
+            username=username
+        )
+        super().__init__(detail=self._exception_text_template)

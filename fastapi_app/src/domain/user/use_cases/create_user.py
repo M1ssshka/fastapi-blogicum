@@ -5,7 +5,7 @@ from infrastructure.sqlite.repositories.users import UserRepository
 from infrastructure.sqlite.models.users import User
 from schemas.users import UserSchema
 from resources.auth import get_password_hash
-from core.exceptions.database_exceptions import EntityAlreadyExistsException
+from core.exceptions.domain_exceptions import UserAlreadyExistsException
 
 
 class CreateUserUseCase:
@@ -22,20 +22,12 @@ class CreateUserUseCase:
         last_name: str = '',
     ) -> UserSchema:
         with self._database.session() as session:
-            # Check if user already exists
-            try:
-                existing_user = self._repo.get_by_username(
-                    session=session, username=username
-                )
-                if existing_user:
-                    raise EntityAlreadyExistsException(
-                        entity_name='User',
-                        detail=f'Пользователь с username "{username}" уже существует',
-                    )
-            except Exception:
-                pass  # User doesn't exist, continue
+            existing_user = self._repo.get_by_username(
+                session=session, username=username
+            )
+            if existing_user:
+                raise UserAlreadyExistsException(username=username)
 
-            # Create new user with hashed password
             user = User(
                 username=username,
                 password=get_password_hash(password),
