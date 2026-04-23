@@ -1,3 +1,5 @@
+import logging
+
 from infrastructure.sqlite.database import database
 from infrastructure.sqlite.repositories.users import UserRepository
 from schemas.users import UserSchema
@@ -7,6 +9,8 @@ from core.exceptions.domain_exceptions import (
     UserNotFoundByLoginException,
     WrongPasswordException,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class AuthenticateUserUseCase:
@@ -26,12 +30,14 @@ class AuthenticateUserUseCase:
                 )
         except EntityNotFoundException:
             error = UserNotFoundByLoginException(username=username)
+            logger.error(f'Попытка входа с несуществующим логином: {username}')
             raise error
 
         if not verify_password(
             plain_password=password, hashed_password=user.password
         ):
             error = WrongPasswordException()
+            logger.error(f'Неверный пароль для пользователя: {username}')
             raise error
 
         return UserSchema.model_validate(obj=user)

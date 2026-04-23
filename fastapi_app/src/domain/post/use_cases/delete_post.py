@@ -1,6 +1,10 @@
+import logging
+
 from core.exceptions.domain_exceptions import ForbiddenActionException
 from infrastructure.sqlite.database import database
 from infrastructure.sqlite.repositories.posts import PostRepository
+
+logger = logging.getLogger(__name__)
 
 
 class DeletePostUseCase:
@@ -19,7 +23,12 @@ class DeletePostUseCase:
             post = self._repo.get_by_id(session=session, id=post_id)
 
             if not (is_superuser or is_staff or post.author_id == user_id):
-                raise ForbiddenActionException()
+                error = ForbiddenActionException()
+                logger.error(
+                    f'Пользователь {user_id} попытался удалить чужой пост {post_id} '
+                    f'(автор: {post.author_id})'
+                )
+                raise error
 
             self._repo.delete(session=session, id=post_id)
 

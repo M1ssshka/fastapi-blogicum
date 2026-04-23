@@ -10,7 +10,9 @@ class CreateCommentUseCase:
         self._database = database
         self._repo = CommentRepository()
 
-    async def execute(self, dto: CommentCreate, author_id: int) -> CommentResponse:
+    async def execute(
+        self, dto: CommentCreate, author_id: int
+    ) -> CommentResponse:
         with self._database.session() as session:
             comment = self._repo.create(
                 session=session,

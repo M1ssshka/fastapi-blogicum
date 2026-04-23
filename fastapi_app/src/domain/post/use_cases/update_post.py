@@ -1,9 +1,13 @@
+import logging
+
 from core.exceptions.domain_exceptions import ForbiddenActionException
 from infrastructure.sqlite.database import database
 from infrastructure.sqlite.repositories.posts import PostRepository
 from infrastructure.sqlite.repositories.categories import CategoryRepository
 from infrastructure.sqlite.repositories.locations import LocationRepository
 from schemas.posts import PostResponseSchema, PostUpdateSchema
+
+logger = logging.getLogger(__name__)
 
 
 class UpdatePostUseCase:
@@ -25,7 +29,12 @@ class UpdatePostUseCase:
             post = self._repo.get_by_id(session=session, id=post_id)
 
             if not (is_superuser or is_staff or post.author_id == user_id):
-                raise ForbiddenActionException()
+                error = ForbiddenActionException()
+                logger.error(
+                    f'Пользователь {user_id} попытался изменить чужой пост {post_id} '
+                    f'(автор: {post.author_id})'
+                )
+                raise error
 
             if dto.category_id is not None:
                 self._category_repo.get_by_id(session, dto.category_id)

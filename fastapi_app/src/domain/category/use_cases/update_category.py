@@ -1,7 +1,11 @@
+import logging
+
 from infrastructure.sqlite.database import database
 from infrastructure.sqlite.repositories.categories import CategoryRepository
 from schemas.categories import CategorySchema, CategoryUpdateSchema
 from core.exceptions.domain_exceptions import ForbiddenActionException
+
+logger = logging.getLogger(__name__)
 
 
 class UpdateCategoryUseCase:
@@ -10,11 +14,18 @@ class UpdateCategoryUseCase:
         self._repo = CategoryRepository()
 
     async def execute(
-        self, category_id: int, dto: CategoryUpdateSchema, is_superuser: bool = False
+        self,
+        category_id: int,
+        dto: CategoryUpdateSchema,
+        is_superuser: bool = False,
     ) -> CategorySchema:
         if not is_superuser:
-            raise ForbiddenActionException()
-        
+            error = ForbiddenActionException()
+            logger.error(
+                f'Попытка изменить категорию {category_id} без прав суперпользователя'
+            )
+            raise error
+
         with self._database.session() as session:
             category = self._repo.update(
                 session=session,

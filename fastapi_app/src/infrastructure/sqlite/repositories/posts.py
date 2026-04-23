@@ -9,9 +9,7 @@ class PostRepository(BaseRepository[Post]):
     def __init__(self):
         super().__init__(Post, PostNotFoundByIdException)
 
-    def get_by_id_with_relations(
-        self, session: Session, post_id: int
-    ) -> Post:
+    def get_by_id_with_relations(self, session: Session, post_id: int) -> Post:
         query = (
             session.query(self._model)
             .options(

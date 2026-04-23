@@ -1,7 +1,11 @@
+import logging
+
 from core.exceptions.domain_exceptions import ForbiddenActionException
 from infrastructure.sqlite.database import database
 from infrastructure.sqlite.repositories.comments import CommentRepository
 from schemas.comments import CommentResponse, CommentUpdate
+
+logger = logging.getLogger(__name__)
 
 
 class UpdateCommentUseCase:
@@ -21,7 +25,12 @@ class UpdateCommentUseCase:
             comment = self._repo.get_by_id(session=session, id=comment_id)
 
             if not (is_superuser or is_staff or comment.author_id == user_id):
-                raise ForbiddenActionException()
+                error = ForbiddenActionException()
+                logger.error(
+                    f'Пользователь {user_id} попытался изменить чужой комментарий {comment_id} '
+                    f'(автор: {comment.author_id})'
+                )
+                raise error
 
             comment = self._repo.update(
                 session=session,

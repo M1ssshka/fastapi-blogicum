@@ -1,3 +1,4 @@
+import logging
 from typing import Annotated
 
 from fastapi import Depends
@@ -13,6 +14,8 @@ from infrastructure.sqlite.database import (
 )
 from infrastructure.sqlite.repositories.users import UserRepository
 from core.config import settings
+
+logger = logging.getLogger(__name__)
 
 
 class AuthService:
@@ -30,8 +33,10 @@ class AuthService:
             )
             username = payload.get('sub')
             if username is None:
+                logger.error("Попытка доступа с невалидным токеном (отсутствует username)")
                 raise CredentialsException(detail=_AUTH_EXCEPTION_MESSAGE)
-        except JWTError:
+        except JWTError as e:
+            logger.error(f"Попытка доступа с невалидным JWT токеном: {str(e)}")
             raise CredentialsException(detail=_AUTH_EXCEPTION_MESSAGE)
 
         try:
@@ -40,6 +45,7 @@ class AuthService:
                     session=session, username=username
                 )
         except EntityNotFoundException:
+            logger.error(f"Попытка доступа с токеном несуществующего пользователя: {username}")
             raise CredentialsException(detail=_AUTH_EXCEPTION_MESSAGE)
 
         return UserSchema.model_validate(obj=user)

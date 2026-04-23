@@ -75,7 +75,9 @@ async def create_location(
     use_case: CreateLocationUseCase = Depends(get_create_location_use_case),
 ) -> LocationSchema:
     try:
-        location = await use_case.execute(dto=dto, is_superuser=current_user.is_superuser)
+        location = await use_case.execute(
+            dto=dto, is_superuser=current_user.is_superuser
+        )
     except LocationNameAlreadyExistsException as exc:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail=exc.get_detail()
@@ -99,7 +101,11 @@ async def update_location(
     use_case: UpdateLocationUseCase = Depends(get_update_location_use_case),
 ) -> LocationSchema:
     try:
-        location = await use_case.execute(location_id=location_id, dto=dto, is_superuser=current_user.is_superuser)
+        location = await use_case.execute(
+            location_id=location_id,
+            dto=dto,
+            is_superuser=current_user.is_superuser,
+        )
     except LocationNotFoundByIdException as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=exc.get_detail()
@@ -118,7 +124,9 @@ async def delete_location(
     use_case: DeleteLocationUseCase = Depends(get_delete_location_use_case),
 ) -> dict:
     try:
-        await use_case.execute(location_id=location_id, is_superuser=current_user.is_superuser)
+        await use_case.execute(
+            location_id=location_id, is_superuser=current_user.is_superuser
+        )
     except LocationNotFoundByIdException as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=exc.get_detail()

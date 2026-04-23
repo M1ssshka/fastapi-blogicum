@@ -16,12 +16,16 @@ class CommentResponse(BasePublishedSchema, BaseCreatedAtSchema):
 class CommentUpdate(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    text: str = Field(..., min_length=1, max_length=1000, description='Текст комментария')
+    text: str = Field(
+        ..., min_length=1, max_length=1000, description='Текст комментария'
+    )
 
 
 class CommentCreate(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     post_id: int = Field(..., description='Публикация')
-    text: str = Field(..., min_length=1, max_length=1000, description='Текст комментария')
+    text: str = Field(
+        ..., min_length=1, max_length=1000, description='Текст комментария'
+    )
     is_published: bool = Field(True, description='Опубликовано')

@@ -2,7 +2,10 @@ from typing import List
 from fastapi import APIRouter, HTTPException, status, Depends, Query
 from schemas.comments import CommentResponse, CommentCreate, CommentUpdate
 from schemas.users import UserSchema
-from core.exceptions.domain_exceptions import CommentNotFoundByIdException, ForbiddenActionException
+from core.exceptions.domain_exceptions import (
+    CommentNotFoundByIdException,
+    ForbiddenActionException,
+)
 from services.auth import AuthService
 
 from domain.comment.use_cases.get_comment_by_id import GetCommentByIdUseCase
@@ -81,8 +84,11 @@ async def update_comment(
 ) -> CommentResponse:
     try:
         comment = await use_case.execute(
-            comment_id=comment_id, dto=dto, user_id=current_user.id,
-            is_staff=current_user.is_staff, is_superuser=current_user.is_superuser
+            comment_id=comment_id,
+            dto=dto,
+            user_id=current_user.id,
+            is_staff=current_user.is_staff,
+            is_superuser=current_user.is_superuser,
         )
     except CommentNotFoundByIdException as exc:
         raise HTTPException(
@@ -103,8 +109,10 @@ async def delete_comment(
 ) -> dict:
     try:
         await use_case.execute(
-            comment_id=comment_id, user_id=current_user.id,
-            is_staff=current_user.is_staff, is_superuser=current_user.is_superuser
+            comment_id=comment_id,
+            user_id=current_user.id,
+            is_staff=current_user.is_staff,
+            is_superuser=current_user.is_superuser,
         )
     except CommentNotFoundByIdException as exc:
         raise HTTPException(

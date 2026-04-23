@@ -10,8 +10,12 @@ class UserSchema(BaseModel):
     id: int
     username: UsernameStr
     password: SecretStr
-    first_name: str = Field(..., min_length=1, max_length=150, description='Имя')
-    last_name: str = Field(..., min_length=1, max_length=150, description='Фамилия')
+    first_name: str = Field(
+        ..., min_length=1, max_length=150, description='Имя'
+    )
+    last_name: str = Field(
+        ..., min_length=1, max_length=150, description='Фамилия'
+    )
     email: ValidatedEmail | None = None
     is_staff: bool
     is_active: bool
@@ -22,7 +26,9 @@ class UserSchema(BaseModel):
 
 class UserCreateSchema(BaseModel):
     username: UsernameStr = Field(..., description='Имя пользователя')
-    password: str = Field(..., min_length=8, max_length=128, description='Пароль')
+    password: str = Field(
+        ..., min_length=8, max_length=128, description='Пароль'
+    )
     email: ValidatedEmail | None = Field(None, description='Email')
     first_name: str = Field('', max_length=150, description='Имя')
     last_name: str = Field('', max_length=150, description='Фамилия')

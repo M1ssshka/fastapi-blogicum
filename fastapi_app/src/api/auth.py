@@ -63,7 +63,9 @@ async def login_for_access_token(
 )
 async def register_user(
     user_data: UserCreateSchema,
-    create_user_use_case: CreateUserUseCase = Depends(get_create_user_use_case),
+    create_user_use_case: CreateUserUseCase = Depends(
+        get_create_user_use_case
+    ),
 ) -> UserResponseSchema:
     try:
         user = await create_user_use_case.execute(

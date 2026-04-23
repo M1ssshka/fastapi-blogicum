@@ -105,7 +105,9 @@ async def create_category(
     use_case: CreateCategoryUseCase = Depends(get_create_category_use_case),
 ) -> CategorySchema:
     try:
-        category = await use_case.execute(dto=dto, is_superuser=current_user.is_superuser)
+        category = await use_case.execute(
+            dto=dto, is_superuser=current_user.is_superuser
+        )
     except CategorySlugAlreadyExistsException as exc:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail=exc.get_detail()
@@ -129,7 +131,11 @@ async def update_category(
     use_case: UpdateCategoryUseCase = Depends(get_update_category_use_case),
 ) -> CategorySchema:
     try:
-        category = await use_case.execute(category_id=category_id, dto=dto, is_superuser=current_user.is_superuser)
+        category = await use_case.execute(
+            category_id=category_id,
+            dto=dto,
+            is_superuser=current_user.is_superuser,
+        )
     except CategoryNotFoundByIdException as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=exc.get_detail()
@@ -148,7 +154,9 @@ async def delete_category(
     use_case: DeleteCategoryUseCase = Depends(get_delete_category_use_case),
 ) -> dict:
     try:
-        await use_case.execute(category_id=category_id, is_superuser=current_user.is_superuser)
+        await use_case.execute(
+            category_id=category_id, is_superuser=current_user.is_superuser
+        )
     except CategoryNotFoundByIdException as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=exc.get_detail()

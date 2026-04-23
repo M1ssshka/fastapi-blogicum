@@ -30,7 +30,7 @@ class CreateUserUseCase:
                 if existing_user:
                     raise EntityAlreadyExistsException(
                         entity_name='User',
-                        detail=f'Пользователь с username "{username}" уже существует'
+                        detail=f'Пользователь с username "{username}" уже существует',
                     )
             except Exception:
                 pass  # User doesn't exist, continue
@@ -48,9 +48,9 @@ class CreateUserUseCase:
                 date_joined=datetime.now(),
                 last_login=None,
             )
-            
+
             session.add(user)
             session.commit()
             session.refresh(user)
-            
+
             return UserSchema.model_validate(obj=user)

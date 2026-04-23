@@ -17,5 +17,9 @@ class Settings(BaseSettings):
 
     SQLITE_URL: str
 
+    LOG_FILE: str = 'logs/app.log'
+    LOG_MAX_BYTES: int = 10485760  # 10MB
+    LOG_BACKUP_COUNT: int = 5
+
 
 settings = Settings()
