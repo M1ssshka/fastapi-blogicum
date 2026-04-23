@@ -4,7 +4,7 @@ from infrastructure.sqlite.database import database
 from infrastructure.sqlite.repositories.categories import CategoryRepository
 from schemas.categories import CategorySchema, CategoryCreateSchema
 from core.exceptions.database_exceptions import CategorySlugConflictException
-from core.exceptions.domain_exceptions import CategorySlugAlreadyExistsException
+from core.exceptions.domain_exceptions import CategorySlugAlreadyExistsException, ForbiddenActionException
 
 
 class CreateCategoryUseCase:
@@ -12,7 +12,10 @@ class CreateCategoryUseCase:
         self._database = database
         self._repo = CategoryRepository()
 
-    async def execute(self, dto: CategoryCreateSchema) -> CategorySchema:
+    async def execute(self, dto: CategoryCreateSchema, is_superuser: bool = False) -> CategorySchema:
+        if not is_superuser:
+            raise ForbiddenActionException()
+        
         with self._database.session() as session:
             try:
                 category = self._repo.create(

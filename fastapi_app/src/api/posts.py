@@ -1,5 +1,6 @@
 from typing import List
 from core.exceptions.domain_exceptions import (
+    ForbiddenActionException,
     PostNotFoundByIdException,
     CategoryNotFoundByIdException,
     LocationNotFoundByIdException,
@@ -9,6 +10,7 @@ from schemas.posts import (
     PostResponseSchema,
     PostCreateSchema,
     PostUpdateSchema,
+    UserSchema,
 )
 
 from domain.post.use_cases.get_post_by_id import GetPostByIdUseCase
@@ -24,6 +26,8 @@ from api.depends import (
     get_delete_post_use_case,
     get_get_all_posts_use_case,
 )
+from services.auth import AuthService
+from starlette.status import HTTP_403_FORBIDDEN
 
 router = APIRouter()
 
@@ -67,13 +71,18 @@ async def get_post_by_id(
 )
 async def create_post(
     dto: PostCreateSchema,
+    current_user: UserSchema = Depends(AuthService.get_current_user),
     use_case: CreatePostUseCase = Depends(get_create_post_use_case),
 ) -> PostResponseSchema:
     try:
-        post = await use_case.execute(dto=dto)
-    except (CategoryNotFoundByIdException, LocationNotFoundByIdException) as exc:
+        post = await use_case.execute(dto=dto, author_id=current_user.id)
+    except (
+        CategoryNotFoundByIdException,
+        LocationNotFoundByIdException,
+    ) as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=exc.get_detail()
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=exc.get_detail(),
         )
     return post
 
@@ -86,17 +95,34 @@ async def create_post(
 async def update_post(
     post_id: int,
     dto: PostUpdateSchema,
+    current_user: UserSchema = Depends(AuthService.get_current_user),
     use_case: UpdatePostUseCase = Depends(get_update_post_use_case),
 ) -> PostResponseSchema:
     try:
-        post = await use_case.execute(post_id=post_id, dto=dto)
+        post = await use_case.execute(
+            post_id=post_id,
+            dto=dto,
+            user_id=current_user.id,
+            is_staff=current_user.is_staff,
+            is_superuser=current_user.is_superuser,
+        )
     except PostNotFoundByIdException as exc:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=exc.get_detail()
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=exc.get_detail(),
         )
-    except (CategoryNotFoundByIdException, LocationNotFoundByIdException) as exc:
+    except (
+        CategoryNotFoundByIdException,
+        LocationNotFoundByIdException,
+    ) as exc:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=exc.get_detail()
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=exc.get_detail(),
+        )
+    except ForbiddenActionException as exc:
+        raise HTTPException(
+            status_code=HTTP_403_FORBIDDEN,
+            detail=exc.get_detail(),
         )
     return post
 
@@ -104,12 +130,22 @@ async def update_post(
 @router.delete('/post/{post_id}', status_code=status.HTTP_200_OK)
 async def delete_post(
     post_id: int,
+    current_user: UserSchema = Depends(AuthService.get_current_user),
     use_case: DeletePostUseCase = Depends(get_delete_post_use_case),
 ) -> dict:
     try:
-        await use_case.execute(post_id=post_id)
+        await use_case.execute(
+            post_id=post_id,
+            user_id=current_user.id,
+            is_staff=current_user.is_staff,
+            is_superuser=current_user.is_superuser,
+        )
     except PostNotFoundByIdException as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=exc.get_detail()
+        )
+    except ForbiddenActionException as exc:
+        raise HTTPException(
+            status_code=HTTP_403_FORBIDDEN, detail=exc.get_detail()
         )
     return {'message': 'Пост успешно удалён'}

@@ -101,3 +101,10 @@ class WrongPasswordException(BaseDomainException):
 
     def __init__(self) -> None:
         super().__init__(detail=self._exception_text)
+
+
+class ForbiddenActionException(BaseDomainException):
+    _exception_text = 'Недостаточно прав для выполнения действия'
+
+    def __init__(self) -> None:
+        super().__init__(detail=self._exception_text)

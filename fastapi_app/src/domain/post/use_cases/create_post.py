@@ -14,13 +14,13 @@ class CreatePostUseCase:
         self._category_repo = CategoryRepository()
         self._location_repo = LocationRepository()
 
-    async def execute(self, dto: PostCreateSchema) -> PostResponseSchema:
+    async def execute(
+        self, dto: PostCreateSchema, author_id: int
+    ) -> PostResponseSchema:
         with self._database.session() as session:
-            # Валидация category_id если передан
             if dto.category_id is not None:
                 self._category_repo.get_by_id(session, dto.category_id)
 
-            # Валидация location_id если передан
             if dto.location_id is not None:
                 self._location_repo.get_by_id(session, dto.location_id)
 
@@ -31,7 +31,7 @@ class CreatePostUseCase:
                 is_published=dto.is_published,
                 created_at=datetime.now(),
                 pub_date=dto.pub_date,
-                author_id=dto.author_id,
+                author_id=author_id,
                 category_id=dto.category_id,
                 location_id=dto.location_id,
                 image=dto.image or '',

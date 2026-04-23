@@ -6,11 +6,14 @@ from schemas.categories import (
     CategoryUpdateSchema,
 )
 from schemas.base import SlugStr
+from schemas.users import UserSchema
 from core.exceptions.domain_exceptions import (
     CategoryNotFoundByIdException,
     CategoryNotFoundBySlugException,
     CategorySlugAlreadyExistsException,
+    ForbiddenActionException,
 )
+from services.auth import AuthService
 
 from domain.category.use_cases.get_category_by_slug import (
     GetCategoryBySlugUseCase,
@@ -98,13 +101,18 @@ async def get_category_by_slug(
 )
 async def create_category(
     dto: CategoryCreateSchema,
+    current_user: UserSchema = Depends(AuthService.get_current_user),
     use_case: CreateCategoryUseCase = Depends(get_create_category_use_case),
 ) -> CategorySchema:
     try:
-        category = await use_case.execute(dto=dto)
+        category = await use_case.execute(dto=dto, is_superuser=current_user.is_superuser)
     except CategorySlugAlreadyExistsException as exc:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT, detail=exc.get_detail()
+        )
+    except ForbiddenActionException as exc:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail=exc.get_detail()
         )
     return category
 
@@ -117,13 +125,18 @@ async def create_category(
 async def update_category(
     category_id: int,
     dto: CategoryUpdateSchema,
+    current_user: UserSchema = Depends(AuthService.get_current_user),
     use_case: UpdateCategoryUseCase = Depends(get_update_category_use_case),
 ) -> CategorySchema:
     try:
-        category = await use_case.execute(category_id=category_id, dto=dto)
+        category = await use_case.execute(category_id=category_id, dto=dto, is_superuser=current_user.is_superuser)
     except CategoryNotFoundByIdException as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=exc.get_detail()
+        )
+    except ForbiddenActionException as exc:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail=exc.get_detail()
         )
     return category
 
@@ -131,12 +144,17 @@ async def update_category(
 @router.delete('/category/{category_id}', status_code=status.HTTP_200_OK)
 async def delete_category(
     category_id: int,
+    current_user: UserSchema = Depends(AuthService.get_current_user),
     use_case: DeleteCategoryUseCase = Depends(get_delete_category_use_case),
 ) -> dict:
     try:
-        await use_case.execute(category_id=category_id)
+        await use_case.execute(category_id=category_id, is_superuser=current_user.is_superuser)
     except CategoryNotFoundByIdException as exc:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail=exc.get_detail()
+        )
+    except ForbiddenActionException as exc:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail=exc.get_detail()
         )
     return {'message': 'Категория успешно удалена'}
