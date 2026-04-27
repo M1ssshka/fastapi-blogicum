@@ -9,6 +9,7 @@ dependencies = [
     "annotated-doc==0.0.4",
     "annotated-types==0.7.0",
     "anyio==4.12.1",
+    "asyncpg==0.31.0",
     "bcrypt==4.0.1",
     "click==8.3.1",
     "ecdsa==0.19.1",
@@ -42,7 +43,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
-where = ["fastapi_app/src"]
+where = ["src"]
 
 [tool.setuptools.package-dir]
-"" = "fastapi_app/src"
+"" = "src"

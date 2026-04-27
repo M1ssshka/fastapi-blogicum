@@ -1,0 +1,25 @@
+from sqlalchemy.orm import Session, joinedload
+
+from application.infrastructure.database.repositories.base import BaseRepository
+from application.infrastructure.database.models.posts import Post
+from application.core.exceptions.domain_exceptions import PostNotFoundByIdException
+
+
+class PostRepository(BaseRepository[Post]):
+    def __init__(self):
+        super().__init__(Post, PostNotFoundByIdException)
+
+    def get_by_id_with_relations(self, session: Session, post_id: int) -> Post:
+        query = (
+            session.query(self._model)
+            .options(
+                joinedload(self._model.author),
+                joinedload(self._model.category),
+                joinedload(self._model.location),
+            )
+            .where(self._model.id == post_id)
+        )
+        post = query.scalar()
+        if not post:
+            raise PostNotFoundByIdException(post_id)
+        return post

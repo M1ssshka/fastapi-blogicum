@@ -2,14 +2,14 @@ from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-from infrastructure.sqlite.models import (
+from application.infrastructure.database.models import (
     User,
     Location,
     Category,
     Post,
     Comment,
 )
-from infrastructure.sqlite.database import Base
+from application.infrastructure.database.database import Base
 
 from alembic import context
 
