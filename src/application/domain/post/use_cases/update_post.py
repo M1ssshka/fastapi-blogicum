@@ -25,8 +25,8 @@ class UpdatePostUseCase:
         is_staff: bool = False,
         is_superuser: bool = False,
     ) -> PostResponseSchema:
-        with self._database.session() as session:
-            post = self._repo.get_by_id(session=session, id=post_id)
+        async with self._database.session() as session:
+            post = await self._repo.get_by_id(session=session, id=post_id)
 
             if not (is_superuser or is_staff or post.author_id == user_id):
                 error = ForbiddenActionException()
@@ -37,12 +37,12 @@ class UpdatePostUseCase:
                 raise error
 
             if dto.category_id is not None:
-                self._category_repo.get_by_id(session, dto.category_id)
+                await self._category_repo.get_by_id(session, dto.category_id)
 
             if dto.location_id is not None:
-                self._location_repo.get_by_id(session, dto.location_id)
+                await self._location_repo.get_by_id(session, dto.location_id)
 
-            post = self._repo.update(
+            post = await self._repo.update(
                 session=session,
                 id=post_id,
                 title=dto.title,
@@ -52,7 +52,7 @@ class UpdatePostUseCase:
                 location_id=dto.location_id,
             )
 
-            post_with_relations = self._repo.get_by_id_with_relations(
+            post_with_relations = await self._repo.get_by_id_with_relations(
                 session=session, post_id=post.id
             )
 

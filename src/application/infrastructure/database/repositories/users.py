@@ -1,4 +1,5 @@
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from application.infrastructure.database.repositories.base import BaseRepository
 from application.infrastructure.database.models.users import User
@@ -12,12 +13,9 @@ class UserRepository(BaseRepository[User]):
     def __init__(self):
         super().__init__(User, UserNotFoundByIdException)
 
-    def get_by_username(self, session: Session, username: str) -> User:
-        user = (
-            session.query(self._model)
-            .where(self._model.username == username)
-            .scalar()
-        )
+    async def get_by_username(self, session: AsyncSession, username: str) -> User:
+        query = select(self._model).where(self._model.username == username)
+        user = await session.scalar(query)
         if not user:
             raise UserNotFoundByLoginException(username)
         return user

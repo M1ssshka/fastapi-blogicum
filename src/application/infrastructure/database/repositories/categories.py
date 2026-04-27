@@ -1,4 +1,5 @@
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 
 from application.infrastructure.database.repositories.base import BaseRepository
@@ -14,15 +15,15 @@ class CategoryRepository(BaseRepository[Category]):
     def __init__(self):
         super().__init__(Category, CategoryNotFoundByIdException)
 
-    def get_by_slug(self, session: Session, slug: str) -> Category:
-        query = session.query(self._model).where(self._model.slug == slug)
-        category = query.scalar()
+    async def get_by_slug(self, session: AsyncSession, slug: str) -> Category:
+        query = select(self._model).where(self._model.slug == slug)
+        category = await session.scalar(query)
         if not category:
             raise CategoryNotFoundBySlugException(slug)
         return category
 
-    def create(self, session: Session, **kwargs) -> Category:
+    async def create(self, session: AsyncSession, **kwargs) -> Category:
         try:
-            return super().create(session=session, **kwargs)
+            return await super().create(session=session, **kwargs)
         except IntegrityError:
             raise CategorySlugConflictException()

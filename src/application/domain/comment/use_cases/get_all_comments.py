@@ -13,8 +13,8 @@ class GetAllCommentsUseCase:
     async def execute(
         self, limit: int = 100, offset: int = 0
     ) -> List[CommentResponse]:
-        with self._database.session() as session:
-            comments = self._repo.get_all_with_relations(
+        async with self._database.session() as session:
+            comments = await self._repo.get_all_with_relations(
                 session=session, limit=limit, offset=offset
             )
 

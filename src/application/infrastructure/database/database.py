@@ -1,34 +1,46 @@
-from contextlib import contextmanager
-from pathlib import Path
+from contextlib import asynccontextmanager
+from typing import Any, AsyncIterator, Dict
 
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import JSON, MetaData, String
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
+from sqlalchemy.orm import DeclarativeBase
+
+from application.core.config import settings
 
 
 class Database:
-    def __init__(self):
-        # Получаем путь к корню проекта (4 уровня вверх от database.py)
-        BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent.parent
-        db_path = BASE_DIR / 'db.sqlite3'
-        self._db_url = f'sqlite:///{db_path}'
-        self._engine = create_engine(self._db_url)
+    def __init__(self) -> None:
+        self._engine = create_async_engine(settings.postgres_url)
+        self._session_factory = async_sessionmaker(
+            bind=self._engine,
+            autocommit=False,
+            autoflush=False,
+            expire_on_commit=False,
+            class_=AsyncSession,
+        )
 
-    @contextmanager
-    def session(self):
-        connection = self._engine.connect()
-
-        Session = sessionmaker(bind=self._engine)
-        session = Session()
-
-        try:
-            yield session
-            session.commit()
-            connection.close()
-        except Exception:
-            session.rollback()
-            raise
+    @asynccontextmanager
+    async def session(self) -> AsyncIterator[AsyncSession]:
+        async with self._session_factory() as session:
+            try:
+                yield session
+                await session.commit()
+            except Exception:
+                await session.rollback()
+                raise
 
 
 database = Database()
-Base = declarative_base()
+metadata = MetaData(schema=settings.POSTGRES_SCHEMA)
+
+
+class Base(DeclarativeBase):
+    metadata = metadata
+    type_annotation_map = {
+        str: String().with_variant(String(255), 'postgresql'),
+        Dict[str, Any]: JSON,
+    }

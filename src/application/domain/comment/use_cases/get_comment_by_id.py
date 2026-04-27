@@ -9,8 +9,8 @@ class GetCommentByIdUseCase:
         self._repo = CommentRepository()
 
     async def execute(self, comment_id: int) -> CommentResponse:
-        with self._database.session() as session:
-            comment = self._repo.get_by_id_with_relations(
+        async with self._database.session() as session:
+            comment = await self._repo.get_by_id_with_relations(
                 session=session, comment_id=comment_id
             )
 

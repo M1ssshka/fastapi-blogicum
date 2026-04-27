@@ -24,8 +24,8 @@ class AuthenticateUserUseCase:
         password: str,
     ) -> UserSchema:
         try:
-            with self._database.session() as session:
-                user = self._repo.get_by_username(
+            async with self._database.session() as session:
+                user = await self._repo.get_by_username(
                     session=session, username=username
                 )
         except EntityNotFoundException:

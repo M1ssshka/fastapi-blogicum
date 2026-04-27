@@ -26,8 +26,8 @@ class UpdateLocationUseCase:
             )
             raise error
 
-        with self._database.session() as session:
-            location = self._repo.update(
+        async with self._database.session() as session:
+            location = await self._repo.update(
                 session=session,
                 id=location_id,
                 name=dto.name,

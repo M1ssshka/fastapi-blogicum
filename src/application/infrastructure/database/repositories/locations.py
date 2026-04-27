@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 
 from application.infrastructure.database.repositories.base import BaseRepository
@@ -11,8 +11,8 @@ class LocationRepository(BaseRepository[Location]):
     def __init__(self):
         super().__init__(Location, LocationNotFoundByIdException)
 
-    def create(self, session: Session, **kwargs) -> Location:
+    async def create(self, session: AsyncSession, **kwargs) -> Location:
         try:
-            return super().create(session=session, **kwargs)
+            return await super().create(session=session, **kwargs)
         except IntegrityError:
             raise LocationNameConflictException()

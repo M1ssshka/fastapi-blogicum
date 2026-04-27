@@ -1,7 +1,7 @@
-from typing import Type, TypeVar, Generic
+from typing import Type, TypeVar, Generic, Any
 
-from sqlalchemy import insert
-from sqlalchemy.orm import Session
+from sqlalchemy import insert, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from application.infrastructure.database.database import Base
 
@@ -17,30 +17,35 @@ class BaseRepository(Generic[ModelType]):
         self._model = model
         self._not_found_exception_class = not_found_exception_class
 
-    def create(self, session: Session, **data) -> ModelType:
+    async def create(self, session: AsyncSession, **data) -> ModelType:
         query = insert(self._model).values(**data).returning(self._model)
-        obj = session.scalar(query)
+        obj = await session.scalar(query)
         return obj
 
-    def get_by_id(self, session: Session, id: int) -> ModelType:
-        obj = session.query(self._model).get(id)
+    async def get_by_id(self, session: AsyncSession, id: int) -> ModelType:
+        query = select(self._model).where(self._model.id == id)
+        obj = await session.scalar(query)
         if obj is None:
             raise self._not_found_exception_class(id)
         return obj
 
-    def get_all(
-        self, session: Session, limit: int = 100, offset: int = 0
+    async def get_all(
+        self, session: AsyncSession, limit: int = 100, offset: int = 0, options: list[Any] | None = None
     ) -> list[ModelType]:
-        query = session.query(self._model).limit(limit).offset(offset).all()
-        return query
+        query = select(self._model)
+        if options:
+            query = query.options(*options)
+        query = query.limit(limit).offset(offset)
+        result = await session.execute(query)
+        return list(result.scalars().all())
 
-    def update(self, session: Session, id: int, **data) -> ModelType:
-        obj = self.get_by_id(session, id)
+    async def update(self, session: AsyncSession, id: int, **data) -> ModelType:
+        obj = await self.get_by_id(session, id)
         for key, value in data.items():
             if hasattr(obj, key):
                 setattr(obj, key, value)
         return obj
 
-    def delete(self, session: Session, id: int) -> None:
-        obj = self.get_by_id(session, id)
-        session.delete(obj)
+    async def delete(self, session: AsyncSession, id: int) -> None:
+        obj = await self.get_by_id(session, id)
+        await session.delete(obj)

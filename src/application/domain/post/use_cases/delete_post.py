@@ -19,8 +19,8 @@ class DeletePostUseCase:
         is_staff: bool = False,
         is_superuser: bool = False,
     ) -> bool:
-        with self._database.session() as session:
-            post = self._repo.get_by_id(session=session, id=post_id)
+        async with self._database.session() as session:
+            post = await self._repo.get_by_id(session=session, id=post_id)
 
             if not (is_superuser or is_staff or post.author_id == user_id):
                 error = ForbiddenActionException()
@@ -30,6 +30,6 @@ class DeletePostUseCase:
                 )
                 raise error
 
-            self._repo.delete(session=session, id=post_id)
+            await self._repo.delete(session=session, id=post_id)
 
         return True

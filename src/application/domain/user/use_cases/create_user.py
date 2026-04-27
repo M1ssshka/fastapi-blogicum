@@ -1,11 +1,16 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from application.infrastructure.database.database import database
-from application.infrastructure.database.repositories.users import UserRepository
+from application.infrastructure.database.repositories.users import (
+    UserRepository,
+)
 from application.infrastructure.database.models.users import User
 from application.schemas.users import UserSchema
 from application.resources.auth import get_password_hash
-from application.core.exceptions.domain_exceptions import UserAlreadyExistsException
+from application.core.exceptions.domain_exceptions import (
+    UserAlreadyExistsException,
+    UserNotFoundByLoginException,
+)
 
 
 class CreateUserUseCase:
@@ -21,12 +26,14 @@ class CreateUserUseCase:
         first_name: str = '',
         last_name: str = '',
     ) -> UserSchema:
-        with self._database.session() as session:
-            existing_user = self._repo.get_by_username(
-                session=session, username=username
-            )
-            if existing_user:
+        async with self._database.session() as session:
+            try:
+                await self._repo.get_by_username(
+                    session=session, username=username
+                )
                 raise UserAlreadyExistsException(username=username)
+            except UserNotFoundByLoginException:
+                pass
 
             user = User(
                 username=username,
@@ -37,12 +44,12 @@ class CreateUserUseCase:
                 is_superuser=False,
                 is_staff=False,
                 is_active=True,
-                date_joined=datetime.now(),
+                date_joined=datetime.now(timezone.utc).replace(tzinfo=None),
                 last_login=None,
             )
 
             session.add(user)
-            session.commit()
-            session.refresh(user)
+            await session.commit()
+            await session.refresh(user)
 
             return UserSchema.model_validate(obj=user)

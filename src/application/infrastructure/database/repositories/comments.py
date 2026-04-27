@@ -1,4 +1,6 @@
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 
 from application.infrastructure.database.repositories.base import BaseRepository
 from application.infrastructure.database.models.comments import Comment
@@ -9,33 +11,33 @@ class CommentRepository(BaseRepository[Comment]):
     def __init__(self):
         super().__init__(Comment, CommentNotFoundByIdException)
 
-    def get_all_with_relations(
-        self, session: Session, limit: int = 100, offset: int = 0
+    async def get_all_with_relations(
+        self, session: AsyncSession, limit: int = 100, offset: int = 0
     ) -> list[Comment]:
         query = (
-            session.query(self._model)
+            select(self._model)
             .options(
                 joinedload(self._model.author),
                 joinedload(self._model.post),
             )
             .limit(limit)
             .offset(offset)
-            .all()
         )
-        return query
+        result = await session.execute(query)
+        return list(result.scalars().all())
 
-    def get_by_id_with_relations(
-        self, session: Session, comment_id: int
+    async def get_by_id_with_relations(
+        self, session: AsyncSession, comment_id: int
     ) -> Comment:
         query = (
-            session.query(self._model)
+            select(self._model)
             .options(
                 joinedload(self._model.author),
                 joinedload(self._model.post),
             )
             .where(self._model.id == comment_id)
         )
-        comment = query.scalar()
+        comment = await session.scalar(query)
         if not comment:
             raise CommentNotFoundByIdException(comment_id)
         return comment

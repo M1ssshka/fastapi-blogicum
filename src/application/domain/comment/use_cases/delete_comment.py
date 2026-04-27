@@ -19,8 +19,8 @@ class DeleteCommentUseCase:
         is_staff: bool = False,
         is_superuser: bool = False,
     ) -> bool:
-        with self._database.session() as session:
-            comment = self._repo.get_by_id(session=session, id=comment_id)
+        async with self._database.session() as session:
+            comment = await self._repo.get_by_id(session=session, id=comment_id)
 
             if not (is_superuser or is_staff or comment.author_id == user_id):
                 error = ForbiddenActionException()
@@ -30,6 +30,6 @@ class DeleteCommentUseCase:
                 )
                 raise error
 
-            self._repo.delete(session=session, id=comment_id)
+            await self._repo.delete(session=session, id=comment_id)
 
         return True

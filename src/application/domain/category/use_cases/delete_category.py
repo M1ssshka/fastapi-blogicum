@@ -22,7 +22,7 @@ class DeleteCategoryUseCase:
             )
             raise error
 
-        with self._database.session() as session:
-            self._repo.delete(session=session, id=category_id)
+        async with self._database.session() as session:
+            await self._repo.delete(session=session, id=category_id)
 
         return True

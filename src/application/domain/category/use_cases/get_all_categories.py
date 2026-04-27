@@ -13,8 +13,8 @@ class GetAllCategoriesUseCase:
     async def execute(
         self, limit: int = 100, offset: int = 0
     ) -> List[CategorySchema]:
-        with self._database.session() as session:
-            categories = self._repo.get_all(
+        async with self._database.session() as session:
+            categories = await self._repo.get_all(
                 session=session, limit=limit, offset=offset
             )
 

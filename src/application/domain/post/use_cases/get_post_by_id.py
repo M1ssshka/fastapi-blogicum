@@ -13,8 +13,8 @@ class GetPostByIdUseCase:
 
     async def execute(self, post_id: int) -> PostResponseSchema:
         try:
-            with self._database.session() as session:
-                post = self._repo.get_by_id_with_relations(
+            async with self._database.session() as session:
+                post = await self._repo.get_by_id_with_relations(
                     session=session, post_id=post_id
                 )
         except PostNotFoundException:

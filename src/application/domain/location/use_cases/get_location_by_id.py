@@ -9,7 +9,7 @@ class GetLocationByIdUseCase:
         self._repo = LocationRepository()
 
     async def execute(self, location_id: int) -> LocationSchema:
-        with self._database.session() as session:
-            location = self._repo.get_by_id(session=session, id=location_id)
+        async with self._database.session() as session:
+            location = await self._repo.get_by_id(session=session, id=location_id)
 
         return LocationSchema.model_validate(obj=location)

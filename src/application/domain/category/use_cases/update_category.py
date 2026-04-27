@@ -26,8 +26,8 @@ class UpdateCategoryUseCase:
             )
             raise error
 
-        with self._database.session() as session:
-            category = self._repo.update(
+        async with self._database.session() as session:
+            category = await self._repo.update(
                 session=session,
                 id=category_id,
                 title=dto.title,

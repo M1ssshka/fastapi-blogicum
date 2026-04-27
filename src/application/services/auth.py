@@ -5,13 +5,17 @@ from fastapi import Depends
 from jose import JWTError, jwt
 
 from application.core.exceptions.auth_exceptions import CredentialsException
-from application.core.exceptions.database_exceptions import EntityNotFoundException
+from application.core.exceptions.database_exceptions import (
+    EntityNotFoundException,
+)
 from application.schemas.users import UserSchema
 from application.resources.auth import oauth2_scheme
 from application.infrastructure.database.database import (
     database as sqlite_database,
 )
-from application.infrastructure.database.repositories.users import UserRepository
+from application.infrastructure.database.repositories.users import (
+    UserRepository,
+)
 
 from application.core.config import settings
 
@@ -33,19 +37,23 @@ class AuthService:
             )
             username = payload.get('sub')
             if username is None:
-                logger.error("Попытка доступа с невалидным токеном (отсутствует username)")
+                logger.error(
+                    'Попытка доступа с невалидным токеном (отсутствует username)'
+                )
                 raise CredentialsException(detail=_AUTH_EXCEPTION_MESSAGE)
         except JWTError as e:
-            logger.error(f"Попытка доступа с невалидным JWT токеном: {str(e)}")
+            logger.error(f'Попытка доступа с невалидным JWT токеном: {str(e)}')
             raise CredentialsException(detail=_AUTH_EXCEPTION_MESSAGE)
 
         try:
-            with _database.session() as session:
-                user = _repo.get_by_username(
+            async with _database.session() as session:
+                user = await _repo.get_by_username(
                     session=session, username=username
                 )
         except EntityNotFoundException:
-            logger.error(f"Попытка доступа с токеном несуществующего пользователя: {username}")
+            logger.error(
+                f'Попытка доступа с токеном несуществующего пользователя: {username}'
+            )
             raise CredentialsException(detail=_AUTH_EXCEPTION_MESSAGE)
 
         return UserSchema.model_validate(obj=user)
