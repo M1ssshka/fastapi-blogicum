@@ -1,6 +1,6 @@
 # Blogicum
 
-A FastAPI-based blog application.
+A FastAPI-based blog application with clean architecture.
 
 ## Requirements
 
@@ -16,6 +16,7 @@ A FastAPI-based blog application.
 
 2. Clone the repository and navigate to the project directory:
    ```bash
+   git clone <repository-url>
    cd blogicum
    ```
 
@@ -34,25 +35,55 @@ A FastAPI-based blog application.
 ## Project Structure
 
 ```
-fastapi-blogicum/
-├── fastapi_app/       # Application wrapper
-│   ├── src/           # Source code
-│   └── main.py        # Entry point
-├── alembic/           # Database migrations
-├── pyproject.toml     # Project configuration
-└── alembic.ini        # Alembic configuration
+blogicum/
+├── src/
+│   ├── main.py                    # Application entry point
+│   └── application/               # Main application package
+│       ├── api/                   # API routes and endpoints
+│       │   ├── auth.py           # Authentication endpoints
+│       │   ├── posts.py          # Post management
+│       │   ├── users.py          # User management
+│       │   ├── categories.py     # Category management
+│       │   ├── locations.py      # Location management
+│       │   ├── comments.py       # Comment management
+│       │   └── depends.py        # Dependency injection
+│       ├── core/                  # Core functionality
+│       │   ├── config.py         # Configuration settings
+│       │   ├── logging_config.py # Logging setup
+│       │   └── exceptions/       # Custom exceptions
+│       ├── domain/                # Business logic (use cases)
+│       │   ├── auth/             # Authentication logic
+│       │   ├── user/             # User operations
+│       │   ├── post/             # Post operations
+│       │   ├── category/         # Category operations
+│       │   ├── location/         # Location operations
+│       │   └── comment/          # Comment operations
+│       ├── infrastructure/        # External services
+│       │   └── database/         # Database layer
+│       │       ├── database.py   # Database connection
+│       │       ├── models/       # SQLAlchemy models
+│       │       └── repositories/ # Data access layer
+│       ├── schemas/               # Pydantic schemas
+│       ├── services/              # Application services
+│       └── resources/             # Shared resources
+├── alembic/                       # Database migrations
+├── pyproject.toml                 # Project configuration
+├── alembic.ini                    # Alembic configuration
+└── docker-compose.yml             # Docker setup
 ```
 
-## Running the Server
+## Running the Application
 
-```bash
-python fastapi_app/main.py
-```
+### Local Development
+
+1. Run the application:
+   ```bash
+   python src/main.py
+   ```
+
+   Or with uvicorn directly:
+   ```bash
+   uvicorn main:app --reload --host 0.0.0.0 --port 8000
+   ```
 
 The server will start on `http://0.0.0.0:8000`.
-
-### Development Mode (with auto-reload)
-
-```bash
-uvicorn fastapi_app.main:app --reload --host 0.0.0.0 --port 8000
-```
