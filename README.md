@@ -120,4 +120,4 @@ This is ideal for development as it allows for faster code reloading.
    ```bash
    uvicorn main:app --reload --host 0.0.0.0 --port 8000
    ```
-
+The server will start on `http://0.0.0.0:8000`.

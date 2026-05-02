@@ -1,3 +1,5 @@
+import logging
+
 from application.core.exceptions.database_exceptions import (
     LocationNotFoundException,
 )
@@ -10,6 +12,7 @@ from application.core.exceptions.domain_exceptions import (
 )
 from application.schemas.locations import LocationSchema
 
+logger = logging.getLogger(__name__)
 
 class GetLocationByIdUseCase:
     def __init__(self):
@@ -23,5 +26,6 @@ class GetLocationByIdUseCase:
                     session=session, id=location_id
                 )
         except LocationNotFoundException:
+            logger.error(f'Локация с id: {location_id} не найдена')
             raise LocationNotFoundByIdException(id=location_id)
         return LocationSchema.model_validate(obj=location)

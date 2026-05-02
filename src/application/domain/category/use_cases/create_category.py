@@ -43,6 +43,7 @@ class CreateCategoryUseCase:
                     created_at=datetime.now(timezone.utc).replace(tzinfo=None),
                 )
         except CategorySlugConflictException:
+            logger.error(f'Категория с slug {dto.slug} уже существует')
             raise CategorySlugAlreadyExistsException(dto.slug)
 
         return CategorySchema.model_validate(obj=category)

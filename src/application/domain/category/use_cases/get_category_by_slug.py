@@ -1,3 +1,5 @@
+import logging
+
 from application.core.exceptions.database_exceptions import (
     CategoryNotFoundException,
 )
@@ -10,6 +12,7 @@ from application.infrastructure.database.repositories.categories import (
 )
 from application.schemas.categories import CategorySchema
 
+logger = logging.getLogger(__name__)
 
 class GetCategoryBySlugUseCase:
     def __init__(self):
@@ -23,5 +26,6 @@ class GetCategoryBySlugUseCase:
                     session=session, slug=slug
                 )
         except CategoryNotFoundException:
+            logger.error(f'Категория с slug: {slug} не найдена')
             raise CategoryNotFoundBySlugException(slug=slug)
         return CategorySchema.model_validate(obj=category)

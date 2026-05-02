@@ -38,6 +38,7 @@ class CreateLocationUseCase:
                     created_at=datetime.now(timezone.utc).replace(tzinfo=None),
                 )
         except LocationNameConflictException:
+            logger.error(f'Локация с названием {dto.name} уже существует')
             raise LocationNameAlreadyExistsException(dto.name)
 
         return LocationSchema.model_validate(obj=location)

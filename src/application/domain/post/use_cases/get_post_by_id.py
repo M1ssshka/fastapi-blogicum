@@ -1,3 +1,5 @@
+import logging
+
 from application.core.exceptions.database_exceptions import PostNotFoundException
 from application.core.exceptions.domain_exceptions import PostNotFoundByIdException
 
@@ -5,6 +7,7 @@ from application.infrastructure.database.database import database
 from application.infrastructure.database.repositories.posts import PostRepository
 from application.schemas.posts import PostResponseSchema
 
+logger = logging.getLogger(__name__)
 
 class GetPostByIdUseCase:
     def __init__(self):
@@ -18,6 +21,7 @@ class GetPostByIdUseCase:
                     session=session, post_id=post_id
                 )
         except PostNotFoundException:
+            logger.error(f'Пост с id: {post_id} не найден')
             raise PostNotFoundByIdException(post_id)
 
         return PostResponseSchema.model_validate(obj=post)

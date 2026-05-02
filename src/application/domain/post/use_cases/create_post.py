@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, timezone
 
 from application.infrastructure.database.database import database
@@ -5,7 +6,16 @@ from application.infrastructure.database.repositories.posts import PostRepositor
 from application.infrastructure.database.repositories.categories import CategoryRepository
 from application.infrastructure.database.repositories.locations import LocationRepository
 from application.schemas.posts import PostResponseSchema, PostCreateSchema
+from application.core.exceptions.database_exceptions import (
+    CategoryNotFoundException,
+    LocationNotFoundException,
+)
+from application.core.exceptions.domain_exceptions import (
+    CategoryNotFoundByIdException,
+    LocationNotFoundByIdException,
+)
 
+logger = logging.getLogger(__name__)
 
 class CreatePostUseCase:
     def __init__(self):
@@ -19,10 +29,18 @@ class CreatePostUseCase:
     ) -> PostResponseSchema:
         async with self._database.session() as session:
             if dto.category_id is not None:
-                await self._category_repo.get_by_id(session, dto.category_id)
+                try:
+                    await self._category_repo.get_by_id(session, dto.category_id)
+                except CategoryNotFoundException:
+                    logger.error(f'Категория с id {dto.category_id} не найдена для создания поста')
+                    raise CategoryNotFoundByIdException(id=dto.category_id)
 
             if dto.location_id is not None:
-                await self._location_repo.get_by_id(session, dto.location_id)
+                try:
+                    await self._location_repo.get_by_id(session, dto.location_id)
+                except LocationNotFoundException:
+                    logger.error(f'Локация с id {dto.location_id} не найдена для создания поста')
+                    raise LocationNotFoundByIdException(id=dto.location_id)
 
             post = await self._repo.create(
                 session=session,

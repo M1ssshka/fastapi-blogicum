@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime, timezone
 
 from application.infrastructure.database.database import database
@@ -12,6 +13,7 @@ from application.core.exceptions.domain_exceptions import (
     UserNotFoundByLoginException,
 )
 
+logger = logging.getLogger(__name__)
 
 class CreateUserUseCase:
     def __init__(self) -> None:
@@ -31,6 +33,7 @@ class CreateUserUseCase:
                 await self._repo.get_by_username(
                     session=session, username=username
                 )
+                logger.error(f'Пользователь с логином {username} уже существует')
                 raise UserAlreadyExistsException(username=username)
             except UserNotFoundByLoginException:
                 pass

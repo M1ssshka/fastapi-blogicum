@@ -33,5 +33,6 @@ class DeleteCategoryUseCase:
             async with self._database.session() as session:
                 await self._repo.delete(session=session, id=category_id)
         except CategoryNotFoundException:
+            logger.error(f'Категория с id: {category_id} не найдена для удаления')
             raise CategoryNotFoundByIdException(id=category_id)
         return True

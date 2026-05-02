@@ -2,10 +2,14 @@ import logging
 
 from application.core.exceptions.database_exceptions import (
     PostNotFoundException,
+    CategoryNotFoundException,
+    LocationNotFoundException,
 )
 from application.core.exceptions.domain_exceptions import (
     ForbiddenActionException,
     PostNotFoundByIdException,
+    CategoryNotFoundByIdException,
+    LocationNotFoundByIdException,
 )
 from application.infrastructure.database.database import database
 from application.infrastructure.database.repositories.posts import (
@@ -51,14 +55,22 @@ class UpdatePostUseCase:
                     raise error
 
                 if dto.category_id is not None:
-                    await self._category_repo.get_by_id(
-                        session, dto.category_id
-                    )
+                    try:
+                        await self._category_repo.get_by_id(
+                            session, dto.category_id
+                        )
+                    except CategoryNotFoundException:
+                        logger.error(f'Категория с id {dto.category_id} не найдена для обновления поста {post_id}')
+                        raise CategoryNotFoundByIdException(id=dto.category_id)
 
                 if dto.location_id is not None:
-                    await self._location_repo.get_by_id(
-                        session, dto.location_id
-                    )
+                    try:
+                        await self._location_repo.get_by_id(
+                            session, dto.location_id
+                        )
+                    except LocationNotFoundException:
+                        logger.error(f'Локация с id {dto.location_id} не найдена для обновления поста {post_id}')
+                        raise LocationNotFoundByIdException(id=dto.location_id)
 
                 post = await self._repo.update(
                     session=session,
@@ -76,6 +88,7 @@ class UpdatePostUseCase:
                     )
                 )
         except PostNotFoundException:
+            logger.error(f'Пост с id: {post_id} не найден для обновления')
             raise PostNotFoundByIdException(id=post_id)
 
         return PostResponseSchema.model_validate(obj=post_with_relations)
