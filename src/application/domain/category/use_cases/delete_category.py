@@ -1,8 +1,16 @@
 import logging
 
+from application.core.exceptions.database_exceptions import (
+    CategoryNotFoundException,
+)
 from application.infrastructure.database.database import database
-from application.infrastructure.database.repositories.categories import CategoryRepository
-from application.core.exceptions.domain_exceptions import ForbiddenActionException
+from application.infrastructure.database.repositories.categories import (
+    CategoryRepository,
+)
+from application.core.exceptions.domain_exceptions import (
+    CategoryNotFoundByIdException,
+    ForbiddenActionException,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -21,8 +29,9 @@ class DeleteCategoryUseCase:
                 f'Попытка удалить категорию {category_id} без прав суперпользователя'
             )
             raise error
-
-        async with self._database.session() as session:
-            await self._repo.delete(session=session, id=category_id)
-
+        try:
+            async with self._database.session() as session:
+                await self._repo.delete(session=session, id=category_id)
+        except CategoryNotFoundException:
+            raise CategoryNotFoundByIdException(id=category_id)
         return True

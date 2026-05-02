@@ -2,9 +2,13 @@ import logging
 from datetime import datetime, timezone
 
 from application.infrastructure.database.database import database
-from application.infrastructure.database.repositories.categories import CategoryRepository
+from application.infrastructure.database.repositories.categories import (
+    CategoryRepository,
+)
 from application.schemas.categories import CategorySchema, CategoryCreateSchema
-from application.core.exceptions.database_exceptions import CategorySlugConflictException
+from application.core.exceptions.database_exceptions import (
+    CategorySlugConflictException,
+)
 from application.core.exceptions.domain_exceptions import (
     CategorySlugAlreadyExistsException,
     ForbiddenActionException,
@@ -28,8 +32,8 @@ class CreateCategoryUseCase:
             )
             raise error
 
-        async with self._database.session() as session:
-            try:
+        try:
+            async with self._database.session() as session:
                 category = await self._repo.create(
                     session=session,
                     title=dto.title,
@@ -38,7 +42,7 @@ class CreateCategoryUseCase:
                     is_published=dto.is_published,
                     created_at=datetime.now(timezone.utc).replace(tzinfo=None),
                 )
-            except CategorySlugConflictException:
-                raise CategorySlugAlreadyExistsException(dto.slug)
+        except CategorySlugConflictException:
+            raise CategorySlugAlreadyExistsException(dto.slug)
 
         return CategorySchema.model_validate(obj=category)

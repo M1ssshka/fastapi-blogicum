@@ -1,10 +1,14 @@
 import logging
 
 from application.infrastructure.database.database import database
-from application.infrastructure.database.repositories.users import UserRepository
+from application.infrastructure.database.repositories.users import (
+    UserRepository,
+)
 from application.schemas.users import UserSchema
 from application.resources.auth import verify_password
-from application.core.exceptions.database_exceptions import EntityNotFoundException
+from application.core.exceptions.database_exceptions import (
+    UserNotFoundException,
+)
 from application.core.exceptions.domain_exceptions import (
     UserNotFoundByLoginException,
     WrongPasswordException,
@@ -28,7 +32,7 @@ class AuthenticateUserUseCase:
                 user = await self._repo.get_by_username(
                     session=session, username=username
                 )
-        except EntityNotFoundException:
+        except UserNotFoundException:
             error = UserNotFoundByLoginException(username=username)
             logger.error(f'Попытка входа с несуществующим логином: {username}')
             raise error

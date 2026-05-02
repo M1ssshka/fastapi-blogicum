@@ -1,9 +1,17 @@
 import logging
 
+from application.core.exceptions.database_exceptions import (
+    CategoryNotFoundException,
+)
 from application.infrastructure.database.database import database
-from application.infrastructure.database.repositories.categories import CategoryRepository
+from application.infrastructure.database.repositories.categories import (
+    CategoryRepository,
+)
 from application.schemas.categories import CategorySchema, CategoryUpdateSchema
-from application.core.exceptions.domain_exceptions import ForbiddenActionException
+from application.core.exceptions.domain_exceptions import (
+    CategoryNotFoundByIdException,
+    ForbiddenActionException,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -26,13 +34,15 @@ class UpdateCategoryUseCase:
             )
             raise error
 
-        async with self._database.session() as session:
-            category = await self._repo.update(
-                session=session,
-                id=category_id,
-                title=dto.title,
-                description=dto.description,
-                is_published=dto.is_published,
-            )
-
+        try:
+            async with self._database.session() as session:
+                category = await self._repo.update(
+                    session=session,
+                    id=category_id,
+                    title=dto.title,
+                    description=dto.description,
+                    is_published=dto.is_published,
+                )
+        except CategoryNotFoundException:
+            raise CategoryNotFoundByIdException(id=category_id)
         return CategorySchema.model_validate(obj=category)

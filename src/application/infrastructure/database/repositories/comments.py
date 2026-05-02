@@ -2,14 +2,18 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
-from application.infrastructure.database.repositories.base import BaseRepository
+from application.infrastructure.database.repositories.base import (
+    BaseRepository,
+)
 from application.infrastructure.database.models.comments import Comment
-from application.core.exceptions.domain_exceptions import CommentNotFoundByIdException
+from application.core.exceptions.database_exceptions import (
+    CommentNotFoundException,
+)
 
 
 class CommentRepository(BaseRepository[Comment]):
     def __init__(self):
-        super().__init__(Comment, CommentNotFoundByIdException)
+        super().__init__(Comment, CommentNotFoundException)
 
     async def get_all_with_relations(
         self, session: AsyncSession, limit: int = 100, offset: int = 0
@@ -39,5 +43,5 @@ class CommentRepository(BaseRepository[Comment]):
         )
         comment = await session.scalar(query)
         if not comment:
-            raise CommentNotFoundByIdException(comment_id)
+            raise CommentNotFoundException()
         return comment

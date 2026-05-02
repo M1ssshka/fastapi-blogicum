@@ -33,3 +33,7 @@ class CategorySlugConflictException(BaseDatabaseException):
 
 class LocationNameConflictException(BaseDatabaseException):
     pass
+
+
+class CommentNotFoundException(BaseDatabaseException):
+    pass

@@ -1,5 +1,13 @@
+from application.core.exceptions.database_exceptions import (
+    CategoryNotFoundException,
+)
+from application.core.exceptions.domain_exceptions import (
+    CategoryNotFoundByIdException,
+)
 from application.infrastructure.database.database import database
-from application.infrastructure.database.repositories.categories import CategoryRepository
+from application.infrastructure.database.repositories.categories import (
+    CategoryRepository,
+)
 from application.schemas.categories import CategorySchema
 
 
@@ -9,7 +17,11 @@ class GetCategoryByIdUseCase:
         self._repo = CategoryRepository()
 
     async def execute(self, category_id: int) -> CategorySchema:
-        async with self._database.session() as session:
-            category = await self._repo.get_by_id(session=session, id=category_id)
-
+        try:
+            async with self._database.session() as session:
+                category = await self._repo.get_by_id(
+                    session=session, id=category_id
+                )
+        except CategoryNotFoundException:
+            raise CategoryNotFoundByIdException(id=category_id)
         return CategorySchema.model_validate(obj=category)

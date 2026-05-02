@@ -1,8 +1,16 @@
 import logging
 
+from application.core.exceptions.database_exceptions import (
+    LocationNotFoundException,
+)
 from application.infrastructure.database.database import database
-from application.infrastructure.database.repositories.locations import LocationRepository
-from application.core.exceptions.domain_exceptions import ForbiddenActionException
+from application.infrastructure.database.repositories.locations import (
+    LocationRepository,
+)
+from application.core.exceptions.domain_exceptions import (
+    ForbiddenActionException,
+    LocationNotFoundByIdException,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -21,8 +29,9 @@ class DeleteLocationUseCase:
                 f'Попытка удалить локацию {location_id} без прав суперпользователя'
             )
             raise error
-
-        async with self._database.session() as session:
-            await self._repo.delete(session=session, id=location_id)
-
+        try:
+            async with self._database.session() as session:
+                await self._repo.delete(session=session, id=location_id)
+        except LocationNotFoundException:
+            raise LocationNotFoundByIdException(id=location_id)
         return True
