@@ -72,18 +72,52 @@ blogicum/
 └── docker-compose.yml             # Docker setup
 ```
 
+## Configuration
+
+The application uses environment variables for configuration. Create a `.env` file in the root directory based on `.env_example`:
+
+```bash
+cp .env_example .env
+```
+
+Key database variables:
+- `POSTGRES_HOST`: Hostname of the PostgreSQL server.
+- `POSTGRES_PORT`: Port of the PostgreSQL server.
+- `POSTGRES_USER`: Database user.
+- `POSTGRES_PASSWORD`: Database password.
+- `POSTGRES_DB`: Database name.
+
 ## Running the Application
 
-### Local Development
+Depending on your environment, you can run the application in several ways:
 
-1. Run the application:
+### 1. Full Docker Setup (Recommended)
+Run the entire stack (backend and database) in containers:
+```bash
+docker compose up -d
+```
+The application will be available at `http://localhost:8020`.
+
+### 2. Hybrid Setup (Local Backend $\rightarrow$ Docker DB)
+This is ideal for development as it allows for faster code reloading.
+
+1. Start only the database container:
+   ```bash
+   docker compose up -d postgres
+   ```
+
+2. Configure your `.env` file for local access:
+   ```env
+   POSTGRES_HOST=localhost
+   POSTGRES_PORT=5436
+   ```
+
+3. Run the application locally:
    ```bash
    python src/main.py
    ```
-
-   Or with uvicorn directly:
+   Or with uvicorn:
    ```bash
    uvicorn main:app --reload --host 0.0.0.0 --port 8000
    ```
 
-The server will start on `http://0.0.0.0:8000`.
