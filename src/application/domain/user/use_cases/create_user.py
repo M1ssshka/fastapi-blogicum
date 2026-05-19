@@ -8,9 +8,11 @@ from application.infrastructure.database.repositories.users import (
 from application.infrastructure.database.models.users import User
 from application.schemas.users import UserSchema
 from application.resources.auth import get_password_hash
+from application.core.exceptions.database_exceptions import (
+    UserNotFoundException,
+)
 from application.core.exceptions.domain_exceptions import (
     UserAlreadyExistsException,
-    UserNotFoundByLoginException,
 )
 
 logger = logging.getLogger(__name__)
@@ -35,7 +37,7 @@ class CreateUserUseCase:
                 )
                 logger.error(f'Пользователь с логином {username} уже существует')
                 raise UserAlreadyExistsException(username=username)
-            except UserNotFoundByLoginException:
+            except UserNotFoundException:
                 pass
 
             user = User(

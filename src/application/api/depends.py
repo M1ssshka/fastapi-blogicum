@@ -1,25 +1,50 @@
 # User
-from application.domain.user.use_cases.get_user_by_username import GetUserByUsernameUseCase
+from application.domain.user.use_cases.activate_user import ActivateUserUseCase
+from application.domain.user.use_cases.deactivate_user import (
+    DeactivateUserUseCase,
+)
+from application.domain.user.use_cases.get_user_by_username import (
+    GetUserByUsernameUseCase,
+)
 from application.domain.user.use_cases.create_user import CreateUserUseCase
+from application.domain.user.use_cases.update_user import UpdateUserUseCase
 
 # Category
 from application.domain.category.use_cases.get_category_by_slug import (
     GetCategoryBySlugUseCase,
 )
-from application.domain.category.use_cases.get_category_by_id import GetCategoryByIdUseCase
-from application.domain.category.use_cases.create_category import CreateCategoryUseCase
-from application.domain.category.use_cases.update_category import UpdateCategoryUseCase
-from application.domain.category.use_cases.delete_category import DeleteCategoryUseCase
+from application.domain.category.use_cases.get_category_by_id import (
+    GetCategoryByIdUseCase,
+)
+from application.domain.category.use_cases.create_category import (
+    CreateCategoryUseCase,
+)
+from application.domain.category.use_cases.update_category import (
+    UpdateCategoryUseCase,
+)
+from application.domain.category.use_cases.delete_category import (
+    DeleteCategoryUseCase,
+)
 from application.domain.category.use_cases.get_all_categories import (
     GetAllCategoriesUseCase,
 )
 
 # Location
-from application.domain.location.use_cases.get_location_by_id import GetLocationByIdUseCase
-from application.domain.location.use_cases.create_location import CreateLocationUseCase
-from application.domain.location.use_cases.update_location import UpdateLocationUseCase
-from application.domain.location.use_cases.delete_location import DeleteLocationUseCase
-from application.domain.location.use_cases.get_all_locations import GetAllLocationsUseCase
+from application.domain.location.use_cases.get_location_by_id import (
+    GetLocationByIdUseCase,
+)
+from application.domain.location.use_cases.create_location import (
+    CreateLocationUseCase,
+)
+from application.domain.location.use_cases.update_location import (
+    UpdateLocationUseCase,
+)
+from application.domain.location.use_cases.delete_location import (
+    DeleteLocationUseCase,
+)
+from application.domain.location.use_cases.get_all_locations import (
+    GetAllLocationsUseCase,
+)
 
 # Post
 from application.domain.post.use_cases.get_post_by_id import GetPostByIdUseCase
@@ -29,15 +54,29 @@ from application.domain.post.use_cases.delete_post import DeletePostUseCase
 from application.domain.post.use_cases.get_all_posts import GetAllPostsUseCase
 
 # Comment
-from application.domain.comment.use_cases.get_comment_by_id import GetCommentByIdUseCase
-from application.domain.comment.use_cases.create_comment import CreateCommentUseCase
-from application.domain.comment.use_cases.update_comment import UpdateCommentUseCase
-from application.domain.comment.use_cases.delete_comment import DeleteCommentUseCase
-from application.domain.comment.use_cases.get_all_comments import GetAllCommentsUseCase
+from application.domain.comment.use_cases.get_comment_by_id import (
+    GetCommentByIdUseCase,
+)
+from application.domain.comment.use_cases.create_comment import (
+    CreateCommentUseCase,
+)
+from application.domain.comment.use_cases.update_comment import (
+    UpdateCommentUseCase,
+)
+from application.domain.comment.use_cases.delete_comment import (
+    DeleteCommentUseCase,
+)
+from application.domain.comment.use_cases.get_all_comments import (
+    GetAllCommentsUseCase,
+)
 
 
-from application.domain.auth.use_cases.authenticate_user import AuthenticateUserUseCase
-from application.domain.auth.use_cases.create_access_token import CreateAccessTokenUseCase
+from application.domain.auth.use_cases.authenticate_user import (
+    AuthenticateUserUseCase,
+)
+from application.domain.auth.use_cases.create_access_token import (
+    CreateAccessTokenUseCase,
+)
 
 
 # User factories
@@ -47,6 +86,18 @@ def get_get_user_by_username_use_case() -> GetUserByUsernameUseCase:
 
 def get_create_user_use_case() -> CreateUserUseCase:
     return CreateUserUseCase()
+
+
+def get_update_user_use_case() -> UpdateUserUseCase:
+    return UpdateUserUseCase()
+
+
+def get_deactivate_user_use_case() -> DeactivateUserUseCase:
+    return DeactivateUserUseCase()
+
+
+def get_activate_user_use_case() -> ActivateUserUseCase:
+    return ActivateUserUseCase()
 
 
 # Category factories

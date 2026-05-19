@@ -7,6 +7,7 @@ from jose import JWTError, jwt
 from application.core.exceptions.auth_exceptions import CredentialsException
 from application.core.exceptions.database_exceptions import (
     EntityNotFoundException,
+    UserNotFoundException,
 )
 from application.schemas.users import UserSchema
 from application.resources.auth import oauth2_scheme
@@ -50,10 +51,18 @@ class AuthService:
                 user = await _repo.get_by_username(
                     session=session, username=username
                 )
-        except EntityNotFoundException:
+        except (EntityNotFoundException, UserNotFoundException):
             logger.error(
                 f'Попытка доступа с токеном несуществующего пользователя: {username}'
             )
             raise CredentialsException(detail=_AUTH_EXCEPTION_MESSAGE)
+
+        if not user.is_active:
+            logger.error(
+                f'Попытка доступа с деактивированного аккаунта: {username}'
+            )
+            raise CredentialsException(
+                detail='Ваш аккаунт деактивирован. Обратитесь в поддержку.'
+            )
 
         return UserSchema.model_validate(obj=user)

@@ -6,6 +6,7 @@ from application.api.locations import router as locations_router
 from application.api.categories import router as categories_router
 from application.api.comments import router as comments_router
 from application.api.auth import router as auth_router
+from application.api.admin import router as admin_router
 from application.core.logging_config import setup_logging
 from application.core.config import settings
 
@@ -26,6 +27,7 @@ def create_app() -> FastAPI:
         allow_headers=['*'],
     )
 
+    app.include_router(admin_router, tags=['Admin'])
     app.include_router(auth_router, tags=['Auth'])
     app.include_router(posts_router, tags=['Posts'])
     app.include_router(users_router, tags=['Users'])

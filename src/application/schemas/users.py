@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from pydantic import BaseModel, SecretStr, ConfigDict, Field
-from application.schemas.base import UsernameStr, ValidatedEmail
+from application.schemas.base import UsernameStr, ValidatedEmail, NameStr
 
 
 class UserSchema(BaseModel):
@@ -10,12 +10,8 @@ class UserSchema(BaseModel):
     id: int
     username: UsernameStr
     password: SecretStr
-    first_name: str = Field(
-        ..., min_length=1, max_length=150, description='Имя'
-    )
-    last_name: str = Field(
-        ..., min_length=1, max_length=150, description='Фамилия'
-    )
+    first_name: NameStr
+    last_name: NameStr
     email: ValidatedEmail | None = None
     is_staff: bool
     is_active: bool
@@ -30,8 +26,19 @@ class UserCreateSchema(BaseModel):
         ..., min_length=8, max_length=128, description='Пароль'
     )
     email: ValidatedEmail | None = Field(None, description='Email')
-    first_name: str = Field('', max_length=150, description='Имя')
-    last_name: str = Field('', max_length=150, description='Фамилия')
+    first_name: NameStr = Field('', description='Имя')
+    last_name: NameStr = Field('', description='Фамилия')
+
+
+class UserUpdateSchema(BaseModel):
+    username: UsernameStr | None = Field(None, description='Имя пользователя')
+    password: str | None = Field(None, min_length=8, max_length=128, description='Пароль')
+    email: ValidatedEmail | None = Field(None, description='Email')
+    first_name: NameStr | None = Field(None, description='Имя')
+    last_name: NameStr | None = Field(None, description='Фамилия')
+    is_active: bool | None = Field(None, description='Активен')
+    is_staff: bool | None = Field(None, description='Стафф')
+    is_superuser: bool | None = Field(None, description='Суперюзер')
 
 
 class UserResponseSchema(BaseModel):
@@ -39,8 +46,8 @@ class UserResponseSchema(BaseModel):
 
     id: int
     username: UsernameStr
-    first_name: str
-    last_name: str
+    first_name: NameStr
+    last_name: NameStr
     email: ValidatedEmail | None = None
     is_active: bool
     date_joined: datetime
