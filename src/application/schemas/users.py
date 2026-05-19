@@ -32,7 +32,9 @@ class UserCreateSchema(BaseModel):
 
 class UserUpdateSchema(BaseModel):
     username: UsernameStr | None = Field(None, description='Имя пользователя')
-    password: str | None = Field(None, min_length=8, max_length=128, description='Пароль')
+    password: str | None = Field(
+        None, min_length=8, max_length=128, description='Пароль'
+    )
     email: ValidatedEmail | None = Field(None, description='Email')
     first_name: NameStr | None = Field(None, description='Имя')
     last_name: NameStr | None = Field(None, description='Фамилия')

@@ -20,7 +20,9 @@ class ActivateUserUseCase:
         self._database = database
         self._repo = UserRepository()
 
-    async def execute(self, target_username: str, current_user: UserSchema) -> UserSchema:
+    async def execute(
+        self, target_username: str, current_user: UserSchema
+    ) -> UserSchema:
         try:
             async with self._database.session() as session:
                 if not current_user.is_superuser:

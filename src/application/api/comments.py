@@ -1,6 +1,10 @@
 from typing import List
 from fastapi import APIRouter, HTTPException, status, Depends, Query
-from application.schemas.comments import CommentResponse, CommentCreate, CommentUpdate
+from application.schemas.comments import (
+    CommentResponse,
+    CommentCreate,
+    CommentUpdate,
+)
 from application.schemas.users import UserSchema
 from application.core.exceptions.domain_exceptions import (
     CommentNotFoundByIdException,
@@ -8,11 +12,21 @@ from application.core.exceptions.domain_exceptions import (
 )
 from application.services.auth import AuthService
 
-from application.domain.comment.use_cases.get_comment_by_id import GetCommentByIdUseCase
-from application.domain.comment.use_cases.create_comment import CreateCommentUseCase
-from application.domain.comment.use_cases.update_comment import UpdateCommentUseCase
-from application.domain.comment.use_cases.delete_comment import DeleteCommentUseCase
-from application.domain.comment.use_cases.get_all_comments import GetAllCommentsUseCase
+from application.domain.comment.use_cases.get_comment_by_id import (
+    GetCommentByIdUseCase,
+)
+from application.domain.comment.use_cases.create_comment import (
+    CreateCommentUseCase,
+)
+from application.domain.comment.use_cases.update_comment import (
+    UpdateCommentUseCase,
+)
+from application.domain.comment.use_cases.delete_comment import (
+    DeleteCommentUseCase,
+)
+from application.domain.comment.use_cases.get_all_comments import (
+    GetAllCommentsUseCase,
+)
 
 from application.api.depends import (
     get_get_comment_by_id_use_case,

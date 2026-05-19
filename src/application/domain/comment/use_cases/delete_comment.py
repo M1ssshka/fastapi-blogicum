@@ -45,6 +45,8 @@ class DeleteCommentUseCase:
 
                 await self._repo.delete(session=session, id=comment_id)
         except CommentNotFoundException:
-            logger.error(f'Комментарий с id: {comment_id} не найден для удаления')
+            logger.error(
+                f'Комментарий с id: {comment_id} не найден для удаления'
+            )
             raise CommentNotFoundByIdException(id=comment_id)
         return True

@@ -18,10 +18,18 @@ from application.services.auth import AuthService
 from application.domain.category.use_cases.get_category_by_slug import (
     GetCategoryBySlugUseCase,
 )
-from application.domain.category.use_cases.get_category_by_id import GetCategoryByIdUseCase
-from application.domain.category.use_cases.create_category import CreateCategoryUseCase
-from application.domain.category.use_cases.update_category import UpdateCategoryUseCase
-from application.domain.category.use_cases.delete_category import DeleteCategoryUseCase
+from application.domain.category.use_cases.get_category_by_id import (
+    GetCategoryByIdUseCase,
+)
+from application.domain.category.use_cases.create_category import (
+    CreateCategoryUseCase,
+)
+from application.domain.category.use_cases.update_category import (
+    UpdateCategoryUseCase,
+)
+from application.domain.category.use_cases.delete_category import (
+    DeleteCategoryUseCase,
+)
 from application.domain.category.use_cases.get_all_categories import (
     GetAllCategoriesUseCase,
 )

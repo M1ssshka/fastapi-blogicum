@@ -22,7 +22,7 @@ class Post(Base):
     location_id: Mapped[int | None] = mapped_column(
         ForeignKey('blog_location.id'), nullable=True
     )
-    image: Mapped[str] = mapped_column(nullable=True, default='')
+    image_path: Mapped[str | None] = mapped_column(nullable=True, default='')
     pub_date: Mapped[datetime] = mapped_column(nullable=False)
 
     author: Mapped['User'] = relationship(back_populates='posts')

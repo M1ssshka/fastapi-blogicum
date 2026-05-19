@@ -2,10 +2,13 @@ import logging
 from typing import List
 
 from application.infrastructure.database.database import database
-from application.infrastructure.database.repositories.posts import PostRepository
+from application.infrastructure.database.repositories.posts import (
+    PostRepository,
+)
 from application.schemas.posts import PostResponseSchema
 
 logger = logging.getLogger(__name__)
+
 
 class GetAllPostsUseCase:
     def __init__(self):

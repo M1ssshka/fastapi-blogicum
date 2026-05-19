@@ -14,6 +14,7 @@ from application.schemas.categories import CategorySchema
 
 logger = logging.getLogger(__name__)
 
+
 class GetCategoryByIdUseCase:
     def __init__(self):
         self._database = database

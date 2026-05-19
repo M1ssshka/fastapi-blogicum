@@ -44,6 +44,8 @@ class UpdateCategoryUseCase:
                     is_published=dto.is_published,
                 )
         except CategoryNotFoundException:
-            logger.error(f'Категория с id: {category_id} не найдена для обновления')
+            logger.error(
+                f'Категория с id: {category_id} не найдена для обновления'
+            )
             raise CategoryNotFoundByIdException(id=category_id)
         return CategorySchema.model_validate(obj=category)

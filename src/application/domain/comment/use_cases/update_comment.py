@@ -57,6 +57,8 @@ class UpdateCommentUseCase:
                     )
                 )
         except CommentNotFoundException:
-            logger.error(f'Комментарий с id: {comment_id} не найден для обновления')
+            logger.error(
+                f'Комментарий с id: {comment_id} не найден для обновления'
+            )
             raise CommentNotFoundByIdException(id=comment_id)
         return CommentResponse.model_validate(obj=comment_with_relations)

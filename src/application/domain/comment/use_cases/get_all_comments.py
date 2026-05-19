@@ -2,10 +2,13 @@ import logging
 from typing import List
 
 from application.infrastructure.database.database import database
-from application.infrastructure.database.repositories.comments import CommentRepository
+from application.infrastructure.database.repositories.comments import (
+    CommentRepository,
+)
 from application.schemas.comments import CommentResponse
 
 logger = logging.getLogger(__name__)
+
 
 class GetAllCommentsUseCase:
     def __init__(self):

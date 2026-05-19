@@ -1,4 +1,4 @@
-from pydantic import Field, ConfigDict
+from pydantic import Field, ConfigDict, BaseModel
 from datetime import datetime
 
 from application.schemas.base import BaseCreatedAtSchema, BasePublishedSchema
@@ -17,7 +17,7 @@ class PostCreateSchema(BasePublishedSchema):
     pub_date: datetime = Field(..., description='Дата и время публикации')
     location_id: int | None = Field(None, description='ID местоположения')
     category_id: int | None = Field(None, description='ID категории')
-    image: str | None = Field(
+    image_path: str | None = Field(
         None, max_length=512, description='Путь к изображению'
     )
 
@@ -25,12 +25,15 @@ class PostCreateSchema(BasePublishedSchema):
 class PostUpdateSchema(BasePublishedSchema):
     model_config = ConfigDict(from_attributes=True)
 
-    title: str = Field(
-        ..., min_length=1, max_length=256, description='Заголовок'
+    title: str | None = Field(
+        None, min_length=1, max_length=256, description='Заголовок'
     )
-    text: str = Field(..., min_length=1, description='Текст')
+    text: str | None = Field(None, min_length=1, description='Текст')
     location_id: int | None = Field(None, description='ID местоположения')
     category_id: int | None = Field(None, description='ID категории')
+    image_path: str | None = Field(
+        None, max_length=512, description='Путь к изображению'
+    )
 
 
 class PostResponseSchema(BasePublishedSchema, BaseCreatedAtSchema):
@@ -47,4 +50,8 @@ class PostResponseSchema(BasePublishedSchema, BaseCreatedAtSchema):
     author: UserSchema = Field(..., description='Автор публикации')
     location: LocationSchema | None = Field(None, description='Местоположение')
     category: CategorySchema | None = Field(None, description='Категория')
-    image: str | None = Field(None, description='Путь к изображению')
+    image_path: str | None = Field(None, description='Путь к изображению')
+
+
+class PostImageResponse(BaseModel):
+    image_path: str = Field(..., description='Путь к загруженному изображению')

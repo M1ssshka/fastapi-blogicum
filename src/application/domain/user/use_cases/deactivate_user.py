@@ -26,19 +26,29 @@ class DeactivateUserUseCase:
     ) -> UserSchema:
         try:
             async with self._database.session() as session:
-                if not current_user.is_superuser and target_username != current_user.username:
+                if (
+                    not current_user.is_superuser
+                    and target_username != current_user.username
+                ):
                     logger.error(
                         f'Пользователь {current_user.username} попытался деактивировать пользователя {target_username}'
                     )
                     raise ForbiddenActionException()
-                
-                if current_user.is_superuser and target_username == current_user.username:
+
+                if (
+                    current_user.is_superuser
+                    and target_username == current_user.username
+                ):
                     logger.warning(
                         f'Суперюзер {current_user.username} попытался деактивировать себя через админ-панель'
                     )
-                    raise ForbiddenActionException('Вы не можете деактивировать себя через панель администратора. Используйте личный кабинет.')
+                    raise ForbiddenActionException(
+                        'Вы не можете деактивировать себя через панель администратора. Используйте личный кабинет.'
+                    )
 
-                user = await self._repo.deactivate_user(session, target_username)
+                user = await self._repo.deactivate_user(
+                    session, target_username
+                )
         except UserNotFoundException:
             logger.error(f'Пользователь с логином {target_username} не найден')
             raise UserNotFoundByLoginException(username=target_username)

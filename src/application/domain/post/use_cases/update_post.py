@@ -60,7 +60,9 @@ class UpdatePostUseCase:
                             session, dto.category_id
                         )
                     except CategoryNotFoundException:
-                        logger.error(f'Категория с id {dto.category_id} не найдена для обновления поста {post_id}')
+                        logger.error(
+                            f'Категория с id {dto.category_id} не найдена для обновления поста {post_id}'
+                        )
                         raise CategoryNotFoundByIdException(id=dto.category_id)
 
                 if dto.location_id is not None:
@@ -69,7 +71,9 @@ class UpdatePostUseCase:
                             session, dto.location_id
                         )
                     except LocationNotFoundException:
-                        logger.error(f'Локация с id {dto.location_id} не найдена для обновления поста {post_id}')
+                        logger.error(
+                            f'Локация с id {dto.location_id} не найдена для обновления поста {post_id}'
+                        )
                         raise LocationNotFoundByIdException(id=dto.location_id)
 
                 post = await self._repo.update(

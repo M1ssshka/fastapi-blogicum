@@ -52,6 +52,12 @@ from application.domain.post.use_cases.create_post import CreatePostUseCase
 from application.domain.post.use_cases.update_post import UpdatePostUseCase
 from application.domain.post.use_cases.delete_post import DeletePostUseCase
 from application.domain.post.use_cases.get_all_posts import GetAllPostsUseCase
+from application.domain.post.use_cases.add_post_image import (
+    AddPostImageUseCase,
+)
+from application.domain.post.use_cases.get_post_image import (
+    GetPostImageUseCase,
+)
 
 # Comment
 from application.domain.comment.use_cases.get_comment_by_id import (
@@ -165,6 +171,14 @@ def get_delete_post_use_case() -> DeletePostUseCase:
 
 def get_get_all_posts_use_case() -> GetAllPostsUseCase:
     return GetAllPostsUseCase()
+
+
+def get_add_post_image_use_case() -> AddPostImageUseCase:
+    return AddPostImageUseCase()
+
+
+def get_get_post_image_use_case() -> GetPostImageUseCase:
+    return GetPostImageUseCase()
 
 
 # Comment factories

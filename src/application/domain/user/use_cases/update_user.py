@@ -57,7 +57,9 @@ class UpdateUserUseCase:
                     }
 
                 if 'password' in data_to_update:
-                    data_to_update['password'] = get_password_hash(data_to_update['password'])
+                    data_to_update['password'] = get_password_hash(
+                        data_to_update['password']
+                    )
 
                 updated_user = await self._repo.update_user(
                     session=session,

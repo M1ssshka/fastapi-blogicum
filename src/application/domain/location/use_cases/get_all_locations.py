@@ -2,10 +2,13 @@ import logging
 from typing import List
 
 from application.infrastructure.database.database import database
-from application.infrastructure.database.repositories.locations import LocationRepository
+from application.infrastructure.database.repositories.locations import (
+    LocationRepository,
+)
 from application.schemas.locations import LocationSchema
 
 logger = logging.getLogger(__name__)
+
 
 class GetAllLocationsUseCase:
     def __init__(self):

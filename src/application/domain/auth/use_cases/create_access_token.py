@@ -7,6 +7,7 @@ from application.core.config import settings
 
 logger = logging.getLogger(__name__)
 
+
 class CreateAccessTokenUseCase:
     async def execute(
         self, username: str, expires_delta: timedelta | None = None
@@ -28,5 +29,7 @@ class CreateAccessTokenUseCase:
             )
             return encoded_jwt
         except Exception as e:
-            logger.error(f'Ошибка при создании access токена для пользователя {username}: {e}')
+            logger.error(
+                f'Ошибка при создании access токена для пользователя {username}: {e}'
+            )
             raise e

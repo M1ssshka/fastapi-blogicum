@@ -13,11 +13,21 @@ from application.core.exceptions.domain_exceptions import (
 )
 from application.services.auth import AuthService
 
-from application.domain.location.use_cases.get_location_by_id import GetLocationByIdUseCase
-from application.domain.location.use_cases.create_location import CreateLocationUseCase
-from application.domain.location.use_cases.update_location import UpdateLocationUseCase
-from application.domain.location.use_cases.delete_location import DeleteLocationUseCase
-from application.domain.location.use_cases.get_all_locations import GetAllLocationsUseCase
+from application.domain.location.use_cases.get_location_by_id import (
+    GetLocationByIdUseCase,
+)
+from application.domain.location.use_cases.create_location import (
+    CreateLocationUseCase,
+)
+from application.domain.location.use_cases.update_location import (
+    UpdateLocationUseCase,
+)
+from application.domain.location.use_cases.delete_location import (
+    DeleteLocationUseCase,
+)
+from application.domain.location.use_cases.get_all_locations import (
+    GetAllLocationsUseCase,
+)
 
 from application.api.depends import (
     get_get_location_by_id_use_case,

@@ -50,9 +50,9 @@ class UserRepository(BaseRepository[User]):
         user = await session.scalar(query)
         if not user:
             raise UserNotFoundException()
-        
+
         for key, value in update_data.items():
             if value is not None:
                 setattr(user, key, value)
-        
+
         return user

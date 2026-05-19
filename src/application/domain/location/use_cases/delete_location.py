@@ -33,6 +33,8 @@ class DeleteLocationUseCase:
             async with self._database.session() as session:
                 await self._repo.delete(session=session, id=location_id)
         except LocationNotFoundException:
-            logger.error(f'Локация с id: {location_id} не найдена для удаления')
+            logger.error(
+                f'Локация с id: {location_id} не найдена для удаления'
+            )
             raise LocationNotFoundByIdException(id=location_id)
         return True

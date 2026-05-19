@@ -14,6 +14,7 @@ from application.core.exceptions.domain_exceptions import (
 
 logger = logging.getLogger(__name__)
 
+
 class GetUserByUsernameUseCase:
     def __init__(self):
         self._database = database

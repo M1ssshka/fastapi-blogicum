@@ -2,10 +2,13 @@ import logging
 from typing import List
 
 from application.infrastructure.database.database import database
-from application.infrastructure.database.repositories.categories import CategoryRepository
+from application.infrastructure.database.repositories.categories import (
+    CategoryRepository,
+)
 from application.schemas.categories import CategorySchema
 
 logger = logging.getLogger(__name__)
+
 
 class GetAllCategoriesUseCase:
     def __init__(self):

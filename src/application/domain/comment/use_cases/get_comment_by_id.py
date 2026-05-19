@@ -14,6 +14,7 @@ from application.schemas.comments import CommentResponse
 
 logger = logging.getLogger(__name__)
 
+
 class GetCommentByIdUseCase:
     def __init__(self):
         self._database = database

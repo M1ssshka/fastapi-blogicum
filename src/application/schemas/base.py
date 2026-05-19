@@ -45,7 +45,9 @@ def validate_username(value: str) -> str:
 
 def validate_name(value: str) -> str:
     if not value or value.isspace():
-        raise ValueError('Имя или фамилия не могут быть пустыми или состоять только из пробелов')
+        raise ValueError(
+            'Имя или фамилия не могут быть пустыми или состоять только из пробелов'
+        )
     if any(char.isdigit() for char in value):
         raise ValueError('Имя или фамилия не могут содержать цифры')
     return value
@@ -74,7 +76,6 @@ NameStr = Annotated[
 
 
 ValidatedEmail = Annotated[
-
     EmailStr | None,
     Field(description='Email адрес'),
 ]

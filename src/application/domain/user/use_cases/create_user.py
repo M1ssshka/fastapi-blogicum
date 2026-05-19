@@ -17,6 +17,7 @@ from application.core.exceptions.domain_exceptions import (
 
 logger = logging.getLogger(__name__)
 
+
 class CreateUserUseCase:
     def __init__(self) -> None:
         self._database = database
@@ -35,7 +36,9 @@ class CreateUserUseCase:
                 await self._repo.get_by_username(
                     session=session, username=username
                 )
-                logger.error(f'Пользователь с логином {username} уже существует')
+                logger.error(
+                    f'Пользователь с логином {username} уже существует'
+                )
                 raise UserAlreadyExistsException(username=username)
             except UserNotFoundException:
                 pass

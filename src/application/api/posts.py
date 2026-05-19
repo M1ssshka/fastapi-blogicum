@@ -4,17 +4,34 @@ from application.core.exceptions.domain_exceptions import (
     PostNotFoundByIdException,
     CategoryNotFoundByIdException,
     LocationNotFoundByIdException,
+    PostHasNoImageException,
 )
-from fastapi import APIRouter, HTTPException, status, Depends, Query
+from fastapi import (
+    APIRouter,
+    status,
+    HTTPException,
+    Depends,
+    UploadFile,
+    File,
+    Query,
+)
+from fastapi.responses import FileResponse
+
 from application.schemas.posts import (
-    PostResponseSchema,
     PostCreateSchema,
+    PostResponseSchema,
+    PostImageResponse,
     PostUpdateSchema,
     UserSchema,
 )
-
+from application.domain.post.use_cases.get_post_image import (
+    GetPostImageUseCase,
+)
 from application.domain.post.use_cases.get_post_by_id import GetPostByIdUseCase
 from application.domain.post.use_cases.create_post import CreatePostUseCase
+from application.domain.post.use_cases.add_post_image import (
+    AddPostImageUseCase,
+)
 from application.domain.post.use_cases.update_post import UpdatePostUseCase
 from application.domain.post.use_cases.delete_post import DeletePostUseCase
 from application.domain.post.use_cases.get_all_posts import GetAllPostsUseCase
@@ -25,6 +42,8 @@ from application.api.depends import (
     get_update_post_use_case,
     get_delete_post_use_case,
     get_get_all_posts_use_case,
+    get_add_post_image_use_case,
+    get_get_post_image_use_case,
 )
 from application.services.auth import AuthService
 from starlette.status import HTTP_403_FORBIDDEN
@@ -149,3 +168,33 @@ async def delete_post(
             status_code=HTTP_403_FORBIDDEN, detail=exc.get_detail()
         )
     return {'message': 'Пост успешно удалён'}
+
+
+@router.get(
+    '/image/post/{post_id}',
+    status_code=status.HTTP_200_OK,
+    response_class=FileResponse,
+)
+async def get_post_image(
+    post_id: int,
+    use_case: GetPostImageUseCase = Depends(get_get_post_image_use_case),
+) -> FileResponse:
+    try:
+        return await use_case.execute(post_id=post_id)
+    except (PostNotFoundByIdException, PostHasNoImageException) as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=exc.get_detail()
+        )
+
+
+@router.post(
+    '/image/post',
+    status_code=status.HTTP_201_CREATED,
+    response_model=PostImageResponse,
+)
+async def add_post_image(
+    image: UploadFile = File(...),
+    user: UserSchema = Depends(AuthService.get_current_user),
+    use_case: AddPostImageUseCase = Depends(get_add_post_image_use_case),
+) -> PostImageResponse:
+    return await use_case.execute(image=image)

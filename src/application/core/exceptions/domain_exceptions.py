@@ -110,6 +110,20 @@ class ForbiddenActionException(BaseDomainException):
         super().__init__(detail=self._exception_text)
 
 
+class PostHasNoImageException(BaseDomainException):
+    _exception_text = 'У данного поста нет изображения'
+
+    def __init__(self) -> None:
+        super().__init__(detail=self._exception_text)
+
+
+class UploadFileIsNotImageException(BaseDomainException):
+    _exception_text = 'Загруженный файл не является изображением'
+
+    def __init__(self) -> None:
+        super().__init__(detail=self._exception_text)
+
+
 class UserAlreadyExistsException(BaseDomainException):
     _exception_text_template = (
         'Пользователь с username: {username} уже существует'

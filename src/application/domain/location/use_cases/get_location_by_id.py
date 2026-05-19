@@ -14,6 +14,7 @@ from application.schemas.locations import LocationSchema
 
 logger = logging.getLogger(__name__)
 
+
 class GetLocationByIdUseCase:
     def __init__(self):
         self._database = database

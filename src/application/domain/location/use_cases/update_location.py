@@ -43,6 +43,8 @@ class UpdateLocationUseCase:
                     is_published=dto.is_published,
                 )
         except LocationNotFoundException:
-            logger.error(f'Локация с id: {location_id} не найдена для обновления')
+            logger.error(
+                f'Локация с id: {location_id} не найдена для обновления'
+            )
             raise LocationNotFoundByIdException(id=location_id)
         return LocationSchema.model_validate(obj=location)
