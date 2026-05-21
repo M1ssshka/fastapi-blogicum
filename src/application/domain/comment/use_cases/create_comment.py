@@ -30,14 +30,7 @@ class CreateCommentUseCase:
     ) -> CommentResponse:
         try:
             async with self._database.session() as session:
-                # Verify post exists
-                try:
-                    await self._post_repo.get_by_id(session, dto.post_id)
-                except PostNotFoundException:
-                    logger.error(
-                        f'Пост с id {dto.post_id} не найден для создания комментария'
-                    )
-                    raise PostNotFoundByIdException(id=dto.post_id)
+                await self._post_repo.get_by_id(session, dto.post_id)
 
                 comment = await self._repo.create(
                     session=session,
@@ -53,8 +46,12 @@ class CreateCommentUseCase:
                         session=session, comment_id=comment.id
                     )
                 )
-        except PostNotFoundByIdException:
-            raise
+        except PostNotFoundException:
+            logger.error(
+                f'Пост с id {dto.post_id} не найден для создания комментария'
+            )
+            raise PostNotFoundByIdException(id=dto.post_id)
+
         except Exception as e:
             logger.error(f'Ошибка при создании комментария: {e}')
             raise e

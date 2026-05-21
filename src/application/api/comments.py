@@ -1,3 +1,4 @@
+from os import stat
 from typing import List
 from fastapi import APIRouter, HTTPException, status, Depends, Query
 from application.schemas.comments import (
@@ -9,6 +10,7 @@ from application.schemas.users import UserSchema
 from application.core.exceptions.domain_exceptions import (
     CommentNotFoundByIdException,
     ForbiddenActionException,
+    PostNotFoundByIdException,
 )
 from application.services.auth import AuthService
 
@@ -81,7 +83,12 @@ async def create_comment(
     current_user: UserSchema = Depends(AuthService.get_current_user),
     use_case: CreateCommentUseCase = Depends(get_create_comment_use_case),
 ) -> CommentResponse:
-    comment = await use_case.execute(dto=dto, author_id=current_user.id)
+    try:
+        comment = await use_case.execute(dto=dto, author_id=current_user.id)
+    except PostNotFoundByIdException as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=exc.get_detail()
+        )
     return comment
 
 
