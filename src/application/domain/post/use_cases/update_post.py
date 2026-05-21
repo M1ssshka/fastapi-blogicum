@@ -84,6 +84,7 @@ class UpdatePostUseCase:
                     is_published=dto.is_published,
                     category_id=dto.category_id,
                     location_id=dto.location_id,
+                    image_path=dto.image_path,
                 )
 
                 post_with_relations = (
