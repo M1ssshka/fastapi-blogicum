@@ -1,0 +1,14 @@
+$kind: collection
+name: Blogicum Load Tests
+description: Коллекция для нагрузочного тестирования API Blogicum. Содержит сценарии для публичного доступа, авторизованных пользователей и администраторов.
+variables:
+  baseUrl: http://localhost:8000
+  token: ""
+  adminToken: ""
+  postId: ""
+  commentId: ""
+  temp_username: ""
+  temp_email: ""
+  temp_title: ""
+  temp_content: ""
+  temp_text: ""

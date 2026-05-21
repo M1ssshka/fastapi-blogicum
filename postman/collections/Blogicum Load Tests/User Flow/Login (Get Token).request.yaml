@@ -1,0 +1,16 @@
+$kind: http-request
+url: "{{baseUrl}}/token"
+method: POST
+body:
+  type: urlencoded
+  content:
+    username: "{{temp_username}}"
+    password: Password123!
+scripts:
+  - type: afterResponse
+    code: |-
+      const jsonData = pm.response.json();
+      pm.collectionVariables.set("token", jsonData.access_token);
+      pm.test("Token received", function () { pm.expect(jsonData.access_token).to.be.a('string'); });
+    language: text/javascript
+order: 2000

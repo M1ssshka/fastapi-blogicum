@@ -1,0 +1,20 @@
+$kind: http-request
+url: "{{baseUrl}}/token"
+method: POST
+body:
+  type: urlencoded
+  content:
+    username: "admin"
+    password: "adminpassword"
+scripts:
+  - type: afterResponse
+    code: |-
+      const jsonData = pm.response.json();
+      if (jsonData.access_token) {
+        pm.collectionVariables.set("adminToken", jsonData.access_token);
+      }
+      pm.test("Admin token received", function () { 
+        pm.expect(jsonData.access_token).to.be.a('string'); 
+      });
+    language: text/javascript
+order: 1000

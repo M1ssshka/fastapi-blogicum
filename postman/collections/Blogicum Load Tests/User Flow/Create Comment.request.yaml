@@ -1,0 +1,30 @@
+$kind: http-request
+url: "{{baseUrl}}/comment"
+method: POST
+headers:
+  Authorization: Bearer {{token}}
+body:
+  type: json
+  content: |-
+    {
+        "post_id": {{postId}},
+        "text": "This is a load test comment"
+    }
+scripts:
+  - type: beforeRequest
+    code: |-
+      // Ensure postId is a number and not empty
+      let pid = pm.collectionVariables.get("postId");
+      if (!pid) {
+        console.error("Post ID is missing!");
+      }
+    language: text/javascript
+  - type: afterResponse
+    code: |-
+      const jsonData = pm.response.json();
+      if (jsonData.id) {
+        pm.collectionVariables.set("commentId", jsonData.id);
+      }
+      pm.test("Comment created", function () { pm.response.to.have.status(201); });
+    language: text/javascript
+order: 4000

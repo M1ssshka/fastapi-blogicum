@@ -1,0 +1,28 @@
+$kind: http-request
+url: "{{baseUrl}}/post"
+method: POST
+headers:
+  Authorization: Bearer {{token}}
+body:
+  type: json
+  content: |-
+    {
+        "title": "{{temp_title}}",
+        "text": "{{temp_text}}",
+        "pub_date": "{{$isoTimestamp}}"
+    }
+scripts:
+  - type: beforeRequest
+    code: |-
+      pm.collectionVariables.set("temp_title", "Load Test Post " + Math.random());
+      pm.collectionVariables.set("temp_text", "Content for load testing purposes... " + Math.random());
+    language: text/javascript
+  - type: afterResponse
+    code: |-
+      const jsonData = pm.response.json();
+      if (jsonData.id) {
+        pm.collectionVariables.set("postId", jsonData.id);
+      }
+      pm.test("Post created", function () { pm.response.to.have.status(201); });
+    language: text/javascript
+order: 3000

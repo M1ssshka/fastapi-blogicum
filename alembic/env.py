@@ -17,6 +17,10 @@ from application.core.config import settings
 
 from alembic import context
 
+CREATE_SCHEMA_QUERY = (
+    f'CREATE SCHEMA IF NOT EXISTS {settings.POSTGRES_SCHEMA};'
+)
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
@@ -32,6 +36,10 @@ target_metadata = Base.metadata
 
 # Set the database URL from settings
 config.set_main_option('sqlalchemy.url', settings.postgres_url)
+
+
+def filter_foreign_schemas(name, type_, parent_names):
+    return type_ != 'schema' or name == settings.POSTGRES_SCHEMA
 
 
 def run_migrations_offline() -> None:
@@ -61,6 +69,7 @@ def run_migrations_offline() -> None:
 
 
 def do_run_migrations(connection: Connection) -> None:
+
     context.configure(
         connection=connection,
         target_metadata=target_metadata,
@@ -69,6 +78,7 @@ def do_run_migrations(connection: Connection) -> None:
     )
 
     with context.begin_transaction():
+        context.execute(CREATE_SCHEMA_QUERY)
         context.run_migrations()
 
 

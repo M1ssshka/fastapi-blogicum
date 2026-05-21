@@ -14,7 +14,14 @@ from application.core.config import settings
 
 class Database:
     def __init__(self) -> None:
-        self._engine = create_async_engine(settings.postgres_url)
+        self._engine = create_async_engine(
+            settings.postgres_url,
+            connect_args={
+                'server_settings': {
+                    'search_path': settings.POSTGRES_SCHEMA,
+                }
+            },
+        )
         self._session_factory = async_sessionmaker(
             bind=self._engine,
             autocommit=False,
