@@ -19,6 +19,21 @@ from application.core.exceptions.domain_exceptions import (
 )
 from application.schemas.posts import PostImageResponse, PostResponseSchema
 
+from tests.test_api.base import (
+    assert_create_success,
+    assert_create_unauthorized,
+    assert_delete_forbidden,
+    assert_delete_not_found,
+    assert_delete_success,
+    assert_get_all_empty,
+    assert_get_all_with_data,
+    assert_get_by_id_not_found,
+    assert_get_by_id_success,
+    assert_update_forbidden,
+    assert_update_not_found,
+    assert_update_success,
+)
+
 
 def make_post(id=1, author_id=1):
     return {
@@ -56,28 +71,21 @@ class TestGetAllPosts:
     async def test_get_all_posts_empty(
         self, async_client: AsyncClient, override_use_case
     ):
-        override_use_case(
-            get_get_all_posts_use_case, lambda *args, **kwargs: []
+        await assert_get_all_empty(
+            async_client, override_use_case, get_get_all_posts_use_case, '/posts'
         )
-
-        response = await async_client.get('/posts')
-        assert response.status_code == 200
-        assert response.json() == []
 
     @pytest.mark.asyncio
     async def test_get_all_posts_with_data(
         self, async_client: AsyncClient, override_use_case
     ):
-        override_use_case(
+        await assert_get_all_with_data(
+            async_client,
+            override_use_case,
             get_get_all_posts_use_case,
-            lambda *args, **kwargs: [make_post_response()],
+            '/posts',
+            make_post_response,
         )
-
-        response = await async_client.get('/posts')
-        assert response.status_code == 200
-        data = response.json()
-        assert len(data) == 1
-        assert data[0]['title'] == 'Post 1'
 
 
 class TestGetPostById:
@@ -85,25 +93,25 @@ class TestGetPostById:
     async def test_get_post_success(
         self, async_client: AsyncClient, override_use_case
     ):
-        override_use_case(
+        await assert_get_by_id_success(
+            async_client,
+            override_use_case,
             get_get_post_by_id_use_case,
-            lambda *args, **kwargs: make_post_response(),
+            '/post/1',
+            make_post_response,
         )
-
-        response = await async_client.get('/post/1')
-        assert response.status_code == 200
 
     @pytest.mark.asyncio
     async def test_get_post_not_found(
         self, async_client: AsyncClient, override_use_case
     ):
-        async def mock_get(*args, **kwargs):
-            raise PostNotFoundByIdException(id=999)
-
-        override_use_case(get_get_post_by_id_use_case, mock_get)
-
-        response = await async_client.get('/post/999')
-        assert response.status_code == 404
+        await assert_get_by_id_not_found(
+            async_client,
+            override_use_case,
+            get_get_post_by_id_use_case,
+            '/post/999',
+            PostNotFoundByIdException,
+        )
 
 
 class TestCreatePost:
@@ -111,32 +119,30 @@ class TestCreatePost:
     async def test_create_post_success(
         self, async_client: AsyncClient, override_auth, override_use_case
     ):
-        override_use_case(
+        await assert_create_success(
+            async_client,
+            override_use_case,
             get_create_post_use_case,
-            lambda *args, **kwargs: make_post_response(),
-        )
-
-        response = await async_client.post(
             '/post',
-            json={
+            {
                 'title': 'New Post',
                 'text': 'Content',
                 'pub_date': '2024-01-01T00:00:00Z',
             },
+            make_post_response,
         )
-        assert response.status_code == 201
 
     @pytest.mark.asyncio
     async def test_create_post_unauthorized(self, async_client: AsyncClient):
-        response = await async_client.post(
+        await assert_create_unauthorized(
+            async_client,
             '/post',
-            json={
+            {
                 'title': 'Hack',
                 'text': 'Hack',
                 'pub_date': '2024-01-01T00:00:00Z',
             },
         )
-        assert response.status_code == 401
 
     @pytest.mark.asyncio
     async def test_create_post_invalid_category(
@@ -146,7 +152,6 @@ class TestCreatePost:
             raise CategoryNotFoundByIdException(id=999)
 
         override_use_case(get_create_post_use_case, mock_create)
-
         response = await async_client.post(
             '/post',
             json={
@@ -164,37 +169,39 @@ class TestUpdatePost:
     async def test_update_success(
         self, async_client: AsyncClient, override_auth, override_use_case
     ):
-        async def mock_update(*args, **kwargs):
-            return make_post_response()
-
-        override_use_case(get_update_post_use_case, mock_update)
-
-        response = await async_client.put('/post/1', json={'title': 'Updated'})
-        assert response.status_code == 200
+        await assert_update_success(
+            async_client,
+            override_use_case,
+            get_update_post_use_case,
+            '/post/1',
+            {'title': 'Updated'},
+            make_post_response,
+        )
 
     @pytest.mark.asyncio
     async def test_update_forbidden(
         self, async_client: AsyncClient, override_auth, override_use_case
     ):
-        async def mock_update(*args, **kwargs):
-            raise ForbiddenActionException()
-
-        override_use_case(get_update_post_use_case, mock_update)
-
-        response = await async_client.put('/post/1', json={'title': 'Hack'})
-        assert response.status_code == 403
+        await assert_update_forbidden(
+            async_client,
+            override_use_case,
+            get_update_post_use_case,
+            '/post/1',
+            {'title': 'Hack'},
+        )
 
     @pytest.mark.asyncio
     async def test_update_not_found(
         self, async_client: AsyncClient, override_auth, override_use_case
     ):
-        async def mock_update(*args, **kwargs):
-            raise PostNotFoundByIdException(id=999)
-
-        override_use_case(get_update_post_use_case, mock_update)
-
-        response = await async_client.put('/post/999', json={'title': 'Nope'})
-        assert response.status_code == 404
+        await assert_update_not_found(
+            async_client,
+            override_use_case,
+            get_update_post_use_case,
+            '/post/999',
+            {'title': 'Nope'},
+            PostNotFoundByIdException,
+        )
 
 
 class TestDeletePost:
@@ -202,36 +209,35 @@ class TestDeletePost:
     async def test_delete_success(
         self, async_client: AsyncClient, override_auth, override_use_case
     ):
-        override_use_case(
-            get_delete_post_use_case, lambda *args, **kwargs: None
+        await assert_delete_success(
+            async_client,
+            override_use_case,
+            get_delete_post_use_case,
+            '/post/1',
         )
-
-        response = await async_client.delete('/post/1')
-        assert response.status_code == 200
 
     @pytest.mark.asyncio
     async def test_delete_forbidden(
         self, async_client: AsyncClient, override_auth, override_use_case
     ):
-        async def mock_delete(*args, **kwargs):
-            raise ForbiddenActionException()
-
-        override_use_case(get_delete_post_use_case, mock_delete)
-
-        response = await async_client.delete('/post/1')
-        assert response.status_code == 403
+        await assert_delete_forbidden(
+            async_client,
+            override_use_case,
+            get_delete_post_use_case,
+            '/post/1',
+        )
 
     @pytest.mark.asyncio
     async def test_delete_not_found(
         self, async_client: AsyncClient, override_auth, override_use_case
     ):
-        async def mock_delete(*args, **kwargs):
-            raise PostNotFoundByIdException(id=999)
-
-        override_use_case(get_delete_post_use_case, mock_delete)
-
-        response = await async_client.delete('/post/999')
-        assert response.status_code == 404
+        await assert_delete_not_found(
+            async_client,
+            override_use_case,
+            get_delete_post_use_case,
+            '/post/999',
+            PostNotFoundByIdException,
+        )
 
 
 class TestGetPostImage:
@@ -245,7 +251,6 @@ class TestGetPostImage:
             )
 
         override_use_case(get_get_post_image_use_case, mock_get)
-
         response = await async_client.get('/image/post/1')
         assert response.status_code == 200
 
@@ -257,7 +262,6 @@ class TestGetPostImage:
             raise PostNotFoundByIdException(id=999)
 
         override_use_case(get_get_post_image_use_case, mock_get)
-
         response = await async_client.get('/image/post/999')
         assert response.status_code == 404
 
@@ -269,7 +273,6 @@ class TestGetPostImage:
             raise PostHasNoImageException()
 
         override_use_case(get_get_post_image_use_case, mock_get)
-
         response = await async_client.get('/image/post/1')
         assert response.status_code == 404
 
@@ -283,7 +286,6 @@ class TestAddPostImage:
             return PostImageResponse(image_path='/static/images/test.jpg')
 
         override_use_case(get_add_post_image_use_case, mock_add)
-
         response = await async_client.post(
             '/image/post',
             files={'image': ('test.jpg', b'fake-image-content', 'image/jpeg')},

@@ -2,7 +2,7 @@ from datetime import datetime
 
 from application.infrastructure.database.database import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, func
 
 
 class Post(Base):
@@ -12,7 +12,9 @@ class Post(Base):
     is_published: Mapped[bool] = mapped_column(nullable=False)
     title: Mapped[str] = mapped_column(nullable=False)
     text: Mapped[str] = mapped_column(nullable=False)
-    created_at: Mapped[datetime] = mapped_column(nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        nullable=False, server_default=func.now()
+    )
     author_id: Mapped[int] = mapped_column(
         ForeignKey('auth_user.id'), nullable=False
     )

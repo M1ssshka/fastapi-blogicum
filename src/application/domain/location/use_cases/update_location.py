@@ -37,10 +37,7 @@ class UpdateLocationUseCase:
         try:
             async with self._database.session() as session:
                 location = await self._repo.update(
-                    session=session,
-                    id=location_id,
-                    name=dto.name,
-                    is_published=dto.is_published,
+                    session=session, id=location_id, **dto.model_dump()
                 )
         except LocationNotFoundException:
             logger.error(

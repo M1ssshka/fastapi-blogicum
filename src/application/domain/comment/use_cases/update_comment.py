@@ -46,9 +46,7 @@ class UpdateCommentUseCase:
                     raise error
 
                 comment = await self._repo.update(
-                    session=session,
-                    id=comment_id,
-                    text=dto.text,
+                    session=session, id=comment_id, **dto.model_dump()
                 )
 
                 comment_with_relations = (

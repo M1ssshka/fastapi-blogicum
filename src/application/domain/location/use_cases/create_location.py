@@ -1,5 +1,4 @@
 import logging
-from datetime import datetime, timezone
 
 from application.infrastructure.database.database import database
 from application.infrastructure.database.repositories.locations import (
@@ -32,10 +31,7 @@ class CreateLocationUseCase:
         try:
             async with self._database.session() as session:
                 location = await self._repo.create(
-                    session=session,
-                    name=dto.name,
-                    is_published=dto.is_published,
-                    created_at=datetime.now(timezone.utc).replace(tzinfo=None),
+                    session=session, **dto.model_dump(exclude={'created_at'})
                 )
         except LocationNameConflictException:
             logger.error(f'Локация с названием {dto.name} уже существует')

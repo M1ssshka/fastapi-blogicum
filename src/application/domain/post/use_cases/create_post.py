@@ -1,5 +1,4 @@
 import logging
-from datetime import datetime, timezone
 
 from application.infrastructure.database.database import database
 from application.infrastructure.database.repositories.posts import (
@@ -57,20 +56,11 @@ class CreatePostUseCase:
                     )
                     raise LocationNotFoundByIdException(id=dto.location_id)
 
-            post = await self._repo.create(
-                session=session,
-                title=dto.title,
-                text=dto.text,
-                is_published=dto.is_published,
-                created_at=datetime.now(timezone.utc).replace(tzinfo=None),
-                pub_date=dto.pub_date.replace(tzinfo=None)
-                if dto.pub_date.tzinfo
-                else dto.pub_date,
-                author_id=author_id,
-                category_id=dto.category_id,
-                location_id=dto.location_id,
-                image_path=dto.image_path or '',
-            )
+            data = dto.model_dump()
+            data['author_id'] = author_id
+            if data['pub_date'] and data['pub_date'].tzinfo:
+                data['pub_date'] = data['pub_date'].replace(tzinfo=None)
+            post = await self._repo.create(session=session, **data)
             await session.flush()
             post_with_relations = await self._repo.get_by_id_with_relations(
                 session=session, post_id=post.id

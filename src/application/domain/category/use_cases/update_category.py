@@ -37,11 +37,7 @@ class UpdateCategoryUseCase:
         try:
             async with self._database.session() as session:
                 category = await self._repo.update(
-                    session=session,
-                    id=category_id,
-                    title=dto.title,
-                    description=dto.description,
-                    is_published=dto.is_published,
+                    session=session, id=category_id, **dto.model_dump()
                 )
         except CategoryNotFoundException:
             logger.error(

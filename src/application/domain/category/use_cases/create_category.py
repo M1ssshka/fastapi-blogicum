@@ -1,5 +1,4 @@
 import logging
-from datetime import datetime, timezone
 
 from application.infrastructure.database.database import database
 from application.infrastructure.database.repositories.categories import (
@@ -35,12 +34,7 @@ class CreateCategoryUseCase:
         try:
             async with self._database.session() as session:
                 category = await self._repo.create(
-                    session=session,
-                    title=dto.title,
-                    description=dto.description,
-                    slug=dto.slug,
-                    is_published=dto.is_published,
-                    created_at=datetime.now(timezone.utc).replace(tzinfo=None),
+                    session=session, **dto.model_dump(exclude={'created_at'})
                 )
         except CategorySlugConflictException:
             logger.error(f'Категория с slug {dto.slug} уже существует')

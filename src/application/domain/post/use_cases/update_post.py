@@ -79,12 +79,7 @@ class UpdatePostUseCase:
                 post = await self._repo.update(
                     session=session,
                     id=post_id,
-                    title=dto.title,
-                    text=dto.text,
-                    is_published=dto.is_published,
-                    category_id=dto.category_id,
-                    location_id=dto.location_id,
-                    image_path=dto.image_path,
+                    **dto.model_dump(exclude_unset=True),
                 )
 
                 post_with_relations = (

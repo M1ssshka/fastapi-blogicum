@@ -2,6 +2,7 @@ from datetime import datetime
 
 from application.infrastructure.database.database import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import func
 
 
 class Location(Base):
@@ -10,6 +11,8 @@ class Location(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     is_published: Mapped[bool] = mapped_column(nullable=False)
     name: Mapped[str] = mapped_column(nullable=False, unique=True)
-    created_at: Mapped[datetime] = mapped_column(nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        nullable=False, server_default=func.now()
+    )
 
     posts: Mapped[list['Post']] = relationship(back_populates='location')

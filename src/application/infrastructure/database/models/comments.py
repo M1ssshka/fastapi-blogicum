@@ -2,7 +2,7 @@ from datetime import datetime
 
 from application.infrastructure.database.database import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, func
 
 
 class Comment(Base):
@@ -10,7 +10,9 @@ class Comment(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     is_published: Mapped[bool] = mapped_column(nullable=False)
-    created_at: Mapped[datetime] = mapped_column(nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        nullable=False, server_default=func.now()
+    )
     text: Mapped[str] = mapped_column(nullable=False)
     author_id: Mapped[int] = mapped_column(
         ForeignKey('auth_user.id'), nullable=False
