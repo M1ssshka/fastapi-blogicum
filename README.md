@@ -37,39 +37,62 @@ A FastAPI-based blog application with clean architecture.
 ```
 blogicum/
 ├── src/
-│   ├── main.py                    # Application entry point
-│   └── application/               # Main application package
-│       ├── api/                   # API routes and endpoints
-│       │   ├── auth.py           # Authentication endpoints
-│       │   ├── posts.py          # Post management
-│       │   ├── users.py          # User management
-│       │   ├── categories.py     # Category management
-│       │   ├── locations.py      # Location management
-│       │   ├── comments.py       # Comment management
-│       │   └── depends.py        # Dependency injection
-│       ├── core/                  # Core functionality
-│       │   ├── config.py         # Configuration settings
-│       │   ├── logging_config.py # Logging setup
-│       │   └── exceptions/       # Custom exceptions
-│       ├── domain/                # Business logic (use cases)
-│       │   ├── auth/             # Authentication logic
-│       │   ├── user/             # User operations
-│       │   ├── post/             # Post operations
-│       │   ├── category/         # Category operations
-│       │   ├── location/         # Location operations
-│       │   └── comment/          # Comment operations
-│       ├── infrastructure/        # External services
-│       │   └── database/         # Database layer
-│       │       ├── database.py   # Database connection
-│       │       ├── models/       # SQLAlchemy models
-│       │       └── repositories/ # Data access layer
-│       ├── schemas/               # Pydantic schemas
-│       ├── services/              # Application services
-│       └── resources/             # Shared resources
-├── alembic/                       # Database migrations
-├── pyproject.toml                 # Project configuration
-├── alembic.ini                    # Alembic configuration
-└── docker-compose.yml             # Docker setup
+│   ├── main.py                       # Application entry point
+│   └── application/                  # Main application package
+│       ├── app.py                    # FastAPI app factory
+│       ├── api/                      # API routes and endpoints
+│       │   ├── auth.py              # Authentication endpoints
+│       │   ├── posts.py             # Post management
+│       │   ├── users.py             # User management
+│       │   ├── categories.py        # Category management
+│       │   ├── locations.py         # Location management
+│       │   ├── comments.py          # Comment management
+│       │   ├── admin.py             # Admin endpoints
+│       │   └── depends.py           # Dependency injection
+│       ├── core/                     # Core functionality
+│       │   ├── config.py            # Configuration settings
+│       │   ├── logging_config.py    # Logging setup
+│       │   └── exceptions/          # Custom exceptions
+│       ├── domain/                   # Business logic (use cases)
+│       │   ├── auth/                # Authentication logic
+│       │   ├── user/                # User operations
+│       │   ├── post/                # Post operations
+│       │   ├── category/            # Category operations
+│       │   ├── location/            # Location operations
+│       │   └── comment/             # Comment operations
+│       ├── infrastructure/           # External services
+│       │   └── database/            # Database layer
+│       │       ├── database.py      # Database connection
+│       │       ├── models/          # SQLAlchemy models
+│       │       └── repositories/    # Data access layer
+│       ├── schemas/                  # Pydantic schemas
+│       ├── services/                 # Application services
+│       └── resources/                # Shared resources
+├── tests/                            # Test suite
+│   ├── conftest.py                  # Root fixtures (fake_session, fake_db)
+│   ├── mocks.py                     # FakeSession & FakeDatabase
+│   ├── test_api/                    # API endpoint tests
+│   │   ├── conftest.py             # async_client, auth fixtures
+│   │   ├── base.py                 # Shared CRUD assertion helpers
+│   │   ├── test_admin.py
+│   │   ├── test_auth.py
+│   │   ├── test_categories.py
+│   │   ├── test_comments.py
+│   │   ├── test_locations.py
+│   │   ├── test_posts.py
+│   │   └── test_users.py
+│   ├── test_schemas/                # Pydantic schema validation tests
+│   └── test_use_cases/              # Unit tests for use cases
+├── alembic/                          # Database migrations
+│   └── versions/
+├── static/images/                    # Uploaded post images
+├── postman/                          # Load testing collections
+├── logs/
+├── pyproject.toml                    # Project configuration
+├── pytest.ini                        # Pytest configuration
+├── alembic.ini                       # Alembic configuration
+├── Dockerfile                        # Docker build
+└── docker-compose.yml                # Docker setup
 ```
 
 ## Configuration
