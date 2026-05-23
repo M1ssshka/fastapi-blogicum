@@ -83,6 +83,12 @@ from application.domain.auth.use_cases.authenticate_user import (
 from application.domain.auth.use_cases.create_access_token import (
     CreateAccessTokenUseCase,
 )
+from application.domain.auth.use_cases.create_refresh_token import (
+    CreateRefreshTokenUseCase,
+)
+from application.domain.auth.use_cases.refresh_tokens import (
+    RefreshTokensUseCase,
+)
 
 
 # User factories
@@ -208,3 +214,11 @@ def authenticate_user_use_case() -> AuthenticateUserUseCase:
 
 def create_access_token_use_case() -> CreateAccessTokenUseCase:
     return CreateAccessTokenUseCase()
+
+
+def create_refresh_token_use_case() -> CreateRefreshTokenUseCase:
+    return CreateRefreshTokenUseCase()
+
+
+def refresh_tokens_use_case() -> RefreshTokensUseCase:
+    return RefreshTokensUseCase()

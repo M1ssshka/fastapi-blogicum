@@ -37,3 +37,7 @@ class LocationNameConflictException(BaseDatabaseException):
 
 class CommentNotFoundException(BaseDatabaseException):
     pass
+
+
+class RefreshTokenNotFoundException(BaseDatabaseException):
+    pass

@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     ROOT_PATH: str = ''
 
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 5
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 30
     SECRET_AUTH_KEY: SecretStr
     AUTH_ALGORITHM: str = 'HS256'
 

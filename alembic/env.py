@@ -11,6 +11,7 @@ from application.infrastructure.database.models import (
     Category,
     Post,
     Comment,
+    RefreshToken,
 )
 from application.infrastructure.database.database import Base
 from application.core.config import settings

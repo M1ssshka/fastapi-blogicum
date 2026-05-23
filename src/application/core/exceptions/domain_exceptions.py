@@ -134,3 +134,24 @@ class UserAlreadyExistsException(BaseDomainException):
             username=username
         )
         super().__init__(detail=self._exception_text_template)
+
+
+class RefreshTokenExpiredException(BaseDomainException):
+    _exception_text = 'Срок действия refresh токена истёк'
+
+    def __init__(self) -> None:
+        super().__init__(detail=self._exception_text)
+
+
+class RefreshTokenRevokedException(BaseDomainException):
+    _exception_text = 'Refresh токен был отозван'
+
+    def __init__(self) -> None:
+        super().__init__(detail=self._exception_text)
+
+
+class InvalidRefreshTokenException(BaseDomainException):
+    _exception_text = 'Невалидный refresh токен'
+
+    def __init__(self) -> None:
+        super().__init__(detail=self._exception_text)
