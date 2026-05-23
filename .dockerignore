@@ -27,3 +27,6 @@ logs/
 
 # Project specific
 db.sqlite3
+.ruff_cache/
+htmlcov/
+.coverage

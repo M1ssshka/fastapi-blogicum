@@ -105,9 +105,7 @@ async def register_user(
 @router.post('/refresh', response_model=Token)
 async def refresh_access_token(
     token_data: RefreshTokenRequest,
-    refresh_use_case: RefreshTokensUseCase = Depends(
-        refresh_tokens_use_case
-    ),
+    refresh_use_case: RefreshTokensUseCase = Depends(refresh_tokens_use_case),
 ) -> Token:
     try:
         access_token, refresh_token = await refresh_use_case.execute(

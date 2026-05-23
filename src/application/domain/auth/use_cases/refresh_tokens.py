@@ -35,9 +35,7 @@ class RefreshTokensUseCase:
         self._create_access_token = CreateAccessTokenUseCase()
         self._create_refresh_token = CreateRefreshTokenUseCase()
 
-    async def execute(
-        self, raw_refresh_token: str
-    ) -> tuple[str, str]:
+    async def execute(self, raw_refresh_token: str) -> tuple[str, str]:
         token_hash = hashlib.sha256(raw_refresh_token.encode()).hexdigest()
 
         try:
@@ -49,9 +47,9 @@ class RefreshTokensUseCase:
                 if stored.is_revoked:
                     raise RefreshTokenRevokedException()
 
-                if stored.expires_at.replace(tzinfo=timezone.utc) < datetime.now(
-                    timezone.utc
-                ):
+                if stored.expires_at.replace(
+                    tzinfo=timezone.utc
+                ) < datetime.now(timezone.utc):
                     raise RefreshTokenExpiredException()
 
                 user = await self._user_repo.get_by_id(

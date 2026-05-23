@@ -19,9 +19,7 @@ class RefreshTokenRepository(BaseRepository[RefreshToken]):
     async def get_by_token_hash(
         self, session: AsyncSession, token_hash: str
     ) -> RefreshToken:
-        query = select(self._model).where(
-            self._model.token_hash == token_hash
-        )
+        query = select(self._model).where(self._model.token_hash == token_hash)
         token = await session.scalar(query)
         if not token:
             raise RefreshTokenNotFoundException()
